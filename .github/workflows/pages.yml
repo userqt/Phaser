@@ -22,7 +22,7 @@ jobs:
           mkdir -p public/${GITHUB_REF_NAME}
           cp -r dist/* public/${GITHUB_REF_NAME}/
       - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v6
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
