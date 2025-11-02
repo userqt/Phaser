@@ -9,10 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-      - name: Copy to Pages folder
+      - name: Prepare Pages folder
         run: |
-          mkdir -p public/${GITHUB_REF_NAME}
+          rm -rf public
+          mkdir -p public
+
+      - name: Copy branch files
+        run: |
           rsync -av --exclude='public' --exclude='.git' ./ public/${GITHUB_REF_NAME}/
 
       - name: Deploy to gh-pages
