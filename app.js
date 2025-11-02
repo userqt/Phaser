@@ -6,11 +6,11 @@ function appPreload() {
 async function appCreate() {
     // Initialize here
 
-TextEngine.writeLine("                                              #######################");
-TextEngine.writeLine("                                              ####               ####");
+TextEngine.writeLine("                                              ########################");
+TextEngine.writeLine("                                              ####                ####");
 TextEngine.writeLine("                                              #### HAUNTED HOUSES ####");
-TextEngine.writeLine("                                              ####               ####");
-TextEngine.writeLine("                                              #######################");
+TextEngine.writeLine("                                              ####                ####");
+TextEngine.writeLine("                                              ########################");
 TextEngine.writeLine("                                                     by              ");
 TextEngine.writeLine("                                                      Daniel Tenekedzhiev");
 
