@@ -31,11 +31,10 @@ jobs:
           rsync -av --exclude='public' --exclude='.git' ./ public/${GITHUB_REF_NAME}/
           echo "Copy complete"
 
-      - name: Deploy to gh-pages
-        run: echo "About to deploy"
       - name: Deploy action
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
           force_orphan: true
+          keep_files: true
