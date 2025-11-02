@@ -70,6 +70,15 @@ let TextEngine = {
     };
 
     document.addEventListener("keydown", startHandler);
+
+    const tapStartHandler = () => {
+      this.scene.game.canvas.removeEventListener("pointerup", tapStartHandler);
+      document.removeEventListener("keydown", keyboardStartHandler);
+      this.clear();
+      this.startGame();
+    };
+
+    this.scene.game.canvas.addEventListener("pointerup", tapStartHandler);
   },
 
   startGame() {
