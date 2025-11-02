@@ -72,13 +72,15 @@ let TextEngine = {
     document.addEventListener("keydown", startHandler);
 
     const tapStartHandler = () => {
-      this.scene.game.canvas.removeEventListener("pointerup", tapStartHandler);
-      document.removeEventListener("keydown", keyboardStartHandler);
+      this.scene.game.canvas.removeEventListener(
+        "pointerdown",
+        tapStartHandler
+      );
       this.clear();
       this.startGame();
     };
 
-    this.scene.game.canvas.addEventListener("pointerup", tapStartHandler);
+    this.scene.game.canvas.addEventListener("pointerdown", tapStartHandler);
   },
 
   startGame() {
