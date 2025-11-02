@@ -1,6 +1,8 @@
 name: Publish branch to Pages
 on:
   push:
+    branches-ignore:
+      - gh-pages
     branches:
       - "**"
 
