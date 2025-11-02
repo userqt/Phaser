@@ -8,7 +8,7 @@ async function appCreate() {
 
 TextEngine.writeLine("                                              ########################");
 TextEngine.writeLine("                                              ####                ####");
-TextEngine.writeLine("                                              #### HAUNTED HOUSES ####");
+TextEngine.writeLine("                                              #### HAUNTED HOUSES66 ####");
 TextEngine.writeLine("                                              ####                ####");
 TextEngine.writeLine("                                              ########################");
 TextEngine.writeLine("                                                     by               ");
