@@ -12,16 +12,28 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug current branch
+        run: |
+          echo "Current branch: $GITHUB_REF_NAME"
+          echo "Listing repo files:"
+          ls -la
+
       - name: Prepare Pages folder
         run: |
+          echo "Cleaning public folder"
           rm -rf public
           mkdir -p public
+          echo "Public folder ready"
 
       - name: Copy branch files
         run: |
+          echo "Copying branch files to public/${GITHUB_REF_NAME}/"
           rsync -av --exclude='public' --exclude='.git' ./ public/${GITHUB_REF_NAME}/
+          echo "Copy complete"
 
       - name: Deploy to gh-pages
+        run: echo "About to deploy"
+      - name: Deploy action
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
