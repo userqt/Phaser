@@ -2,9 +2,7 @@ name: Publish branch to Pages
 on:
   push:
     branches:
-      - master
-      - student1
-      - student2
+      - '**'
 
 jobs:
   build:
