@@ -1,0 +1,30 @@
+name: Publish branch to Pages
+on:
+  push:
+    branches:
+      - master
+      - student1
+      - student2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm install
+      - run: npm run build
+      - name: Copy to Pages folder
+        run: |
+          mkdir -p public/${GITHUB_REF_NAME}
+          cp -r dist/* public/${GITHUB_REF_NAME}/
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
