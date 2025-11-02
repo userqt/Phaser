@@ -2,7 +2,7 @@ name: Publish branch to Pages
 on:
   push:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   build:
@@ -12,8 +12,7 @@ jobs:
       - name: Copy to Pages folder
         run: |
           mkdir -p public/${GITHUB_REF_NAME}
-          cp -r * public/${GITHUB_REF_NAME}/
-          rm -rf public/${GITHUB_REF_NAME}/.git
+          rsync -av --exclude='public' --exclude='.git' ./ public/${GITHUB_REF_NAME}/
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
