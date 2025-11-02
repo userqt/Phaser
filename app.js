@@ -6,6 +6,7 @@ function appPreload() {
 async function appCreate() {
     // Initialize here
 
+    
 TextEngine.writeLine("                                              ########################");
 TextEngine.writeLine("                                              ####                ####");
 TextEngine.writeLine("                                              #### HAUNTED HOUSES ####");
