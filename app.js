@@ -11,8 +11,8 @@ TextEngine.writeLine("                                              ####        
 TextEngine.writeLine("                                              #### HAUNTED HOUSES ####");
 TextEngine.writeLine("                                              ####                ####");
 TextEngine.writeLine("                                              ########################");
-TextEngine.writeLine("                                                     by              ");
-TextEngine.writeLine("                                                      Daniel Tenekedzhiev");
+TextEngine.writeLine("                                                     by               ");
+TextEngine.writeLine("                                                      Danier");
 
 TextEngine.writeLine("                    ___||___");
 TextEngine.writeLine("                   ///////////\\");
