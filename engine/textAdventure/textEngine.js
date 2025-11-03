@@ -77,6 +77,8 @@ TextEngine.hasInput = function () {
 
 TextEngine.clear = function () {
   BaseEngine.clear.call(this);
+
+  this.scene.children.removeAll();
   this.textY = 20;
 };
 

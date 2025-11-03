@@ -20,7 +20,7 @@ window.BaseEngine = {
     this.appUpdate();
   },
   clear() {
-    this.scene.children.removeAll();
+    
   },
   getEngineSceneMethods(app) {
     const engine = this;
