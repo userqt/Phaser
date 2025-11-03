@@ -181,3 +181,6 @@ TextEngine.createDecor = function () {
 
   this.decorLayer = graphics;
 };
+
+// TODO -> make responsive
+// TODO -> add layers/overlays boxes to write things inside (stats, inventory, special indicators, etc.)
