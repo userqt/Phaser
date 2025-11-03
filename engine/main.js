@@ -8,8 +8,8 @@ const app = {
 };
 
 new Phaser.Game({
-  width: 800,
-  height: 600,
+  width: 1080,
+  height: 640,
   type: Phaser.AUTO,
   backgroundColor: "#000000",
   scene: window.GameEngine.getEngineSceneMethods(app),
