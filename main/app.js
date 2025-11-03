@@ -6,122 +6,121 @@ function appPreload() {
 async function appCreate() {
     // Initialize here
 
-TextEngine.writeLine("                                              ########################");
-TextEngine.writeLine("                                              ####                ####");
-TextEngine.writeLine("                                              #### HAUNTED HOUSES ####");
-TextEngine.writeLine("                                              ####                ####");
-TextEngine.writeLine("                                              ########################");
-TextEngine.writeLine("                                                     by               ");
-TextEngine.writeLine("                                                      Danier");
+GameEngine.writeLine("                                              ########################");
+GameEngine.writeLine("                                              ####                ####");
+GameEngine.writeLine("                                              #### HAUNTED HOUSES ####");
+GameEngine.writeLine("                                              ####                ####");
+GameEngine.writeLine("                                              ########################");
+GameEngine.writeLine("                                                     by               ");
+GameEngine.writeLine("                                                      Danier");
 
-TextEngine.writeLine("                    ___||___");
-TextEngine.writeLine("                   ///////////\\");
-TextEngine.writeLine("                  ///////////  \\");
-TextEngine.writeLine("                 ///////////    \\");
-TextEngine.writeLine("                ///////////      \\");
-TextEngine.writeLine("          ______///////////________\\_________");
-TextEngine.writeLine("         |    .-       -    .--.    .--.    .|                 ****                   *********     ");
-TextEngine.writeLine("         |   |   HAUNTED   |    |  |    |   .|               ** I I **              **  *   *  **   ");
-TextEngine.writeLine("         |   |    HOUSE    |    |  |    |   .|               *        *             *  <I> <I>  *   ");
-TextEngine.writeLine("         |   |     .-.     |    |  |    |   .|                *  ---  *              *  -----   *   ");
-TextEngine.writeLine("         |   |    |   |    |    |  |    |   .|                 **   **                **      **    ");
-TextEngine.writeLine("         |   |    |   |    |    |  |    |   .|                  *****                  *******      ");
-TextEngine.writeLine("         |   |    |   |    |    |  |    |   .|");
-TextEngine.writeLine("         |   |____|___|____|____|__|____|___.|_|");
-TextEngine.writeLine("         |______________________________________|");
-TextEngine.writeLine("                   ||  ||     ||  ||");
-TextEngine.writeLine("                 ==||==||==   ==||==||==");
-TextEngine.writeLine("                  ||  ||         ||  ||");
+GameEngine.writeLine("                    ___||___");
+GameEngine.writeLine("                   ///////////\\");
+GameEngine.writeLine("                  ///////////  \\");
+GameEngine.writeLine("                 ///////////    \\");
+GameEngine.writeLine("                ///////////      \\");
+GameEngine.writeLine("          ______///////////________\\_________");
+GameEngine.writeLine("         |    .-       -    .--.    .--.    .|                 ****                   *********     ");
+GameEngine.writeLine("         |   |   HAUNTED   |    |  |    |   .|               ** I I **              **  *   *  **   ");
+GameEngine.writeLine("         |   |    HOUSE    |    |  |    |   .|               *        *             *  <I> <I>  *   ");
+GameEngine.writeLine("         |   |     .-.     |    |  |    |   .|                *  ---  *              *  -----   *   ");
+GameEngine.writeLine("         |   |    |   |    |    |  |    |   .|                 **   **                **      **    ");
+GameEngine.writeLine("         |   |    |   |    |    |  |    |   .|                  *****                  *******      ");
+GameEngine.writeLine("         |   |    |   |    |    |  |    |   .|");
+GameEngine.writeLine("         |   |____|___|____|____|__|____|___.|_|");
+GameEngine.writeLine("         |______________________________________|");
+GameEngine.writeLine("                   ||  ||     ||  ||");
+GameEngine.writeLine("                 ==||==||==   ==||==||==");
+GameEngine.writeLine("                  ||  ||         ||  ||");
 
-TextEngine.writeLine("\n\n");
-TextEngine.writeLine("                                               Press Enter Key To Start");
-await TextEngine.readLineAsync()
+GameEngine.writeLine("\n\n");
+GameEngine.writeLine("                                               Press Enter Key To Start");
+await GameEngine.readLineAsync()
 
+GameEngine.writeLine("\n\n");
+GameEngine.writeLine("      -");
+GameEngine.writeLine("      --");
+GameEngine.writeLine("     ----");
+GameEngine.writeLine("    -------");
+GameEngine.writeLine("   ---------");
+GameEngine.writeLine("  ------------");
+GameEngine.writeLine(" ----------------             ||||||           ");
+GameEngine.writeLine("------------------|          ||||||||          ");
+GameEngine.writeLine("----------I  I----|           ||||||           ");
+GameEngine.writeLine("----------I  I----|             ||             ");
+GameEngine.writeLine("------------------|             ||             ");
+GameEngine.writeLine("----|  |----------|             ||             ");
+GameEngine.writeLine("----|  |----------||||||||||||||||||||||||||||");
 
-TextEngine.writeLine("\n\n");
-TextEngine.writeLine("      -");
-TextEngine.writeLine("      --");
-TextEngine.writeLine("     ----");
-TextEngine.writeLine("    -------");
-TextEngine.writeLine("   ---------");
-TextEngine.writeLine("  ------------");
-TextEngine.writeLine(" ----------------             ||||||           ");
-TextEngine.writeLine("------------------|          ||||||||          ");
-TextEngine.writeLine("----------I  I----|           ||||||           ");
-TextEngine.writeLine("----------I  I----|             ||             ");
-TextEngine.writeLine("------------------|             ||             ");
-TextEngine.writeLine("----|  |----------|             ||             ");
-TextEngine.writeLine("----|  |----------||||||||||||||||||||||||||||");
-
-TextEngine.writeLine("\n\n");
-TextEngine.writeLine("Hello adventurer");
-TextEngine.writeLine("You are now in front of a house. Do you want to go inside?");
-TextEngine.writeLine("a) Yes");
-TextEngine.writeLine("b) No");
+GameEngine.writeLine("\n\n");
+GameEngine.writeLine("Hello adventurer");
+GameEngine.writeLine("You are now in front of a house. Do you want to go inside?");
+GameEngine.writeLine("a) Yes");
+GameEngine.writeLine("b) No");
 
 let choiceHouse = "";
 while(choiceHouse !== "a" && choiceHouse !== "b") {
-    choiceHouse = (await TextEngine.readLineAsync()).toLowerCase().toLowerCase();
+    choiceHouse = (await GameEngine.readLineAsync()).toLowerCase();
     if(choiceHouse !== "a" && choiceHouse !== "b") {
-        TextEngine.writeLine("Sorry this answer is not available, please choose a or b!");
+        GameEngine.writeLine("Sorry this answer is not available, please choose a or b!");
     }
 }
 
 if(choiceHouse === "a") {
-    TextEngine.writeLine("                                                                  ----------------- ");  
-    TextEngine.writeLine("  -------------                                                   |      !!       | ");
-    TextEngine.writeLine(" |             |                                                  |      !!       | ");
-    TextEngine.writeLine(" |   w    c    |                |-|                               |      !!       | ");
-    TextEngine.writeLine(" |             |                | |                V              |      !!       | ");
-    TextEngine.writeLine(" |          *  |   |------------------|     |--------------|--|   |   *  !! *     | ");
-    TextEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
-    TextEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
-    TextEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
-    TextEngine.writeLine("-|-------------|--------------------------------------------------------------------");
+    GameEngine.writeLine("                                                                  ----------------- ");  
+    GameEngine.writeLine("  -------------                                                   |      !!       | ");
+    GameEngine.writeLine(" |             |                                                  |      !!       | ");
+    GameEngine.writeLine(" |   w    c    |                |-|                               |      !!       | ");
+    GameEngine.writeLine(" |             |                | |                V              |      !!       | ");
+    GameEngine.writeLine(" |          *  |   |------------------|     |--------------|--|   |   *  !! *     | ");
+    GameEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
+    GameEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
+    GameEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
+    GameEngine.writeLine("-|-------------|--------------------------------------------------------------------");
 
-    TextEngine.writeLine("\n\n");
-    TextEngine.writeLine("You are now inside the house in the bedroom. What do you want to choose?");
-    TextEngine.writeLine("a) open shelve");
-    TextEngine.writeLine("b) turn on Tv");
-    TextEngine.writeLine("c) drink water");
-    TextEngine.writeLine("d) go to the bathroom");
+    GameEngine.writeLine("\n\n");
+    GameEngine.writeLine("You are now inside the house in the bedroom. What do you want to choose?");
+    GameEngine.writeLine("a) open shelve");
+    GameEngine.writeLine("b) turn on Tv");
+    GameEngine.writeLine("c) drink water");
+    GameEngine.writeLine("d) go to the bathroom");
 
     let choiceBedroom = "";
     while(choiceBedroom !== "a" && choiceBedroom !== "b" && choiceBedroom !== "c" && choiceBedroom !== "d") {
-        choiceBedroom = (await TextEngine.readLineAsync()).toLowerCase();
+        choiceBedroom = (await GameEngine.readLineAsync()).toLowerCase();
         if(choiceBedroom !== "a" && choiceBedroom !== "b" && choiceBedroom !== "c" && choiceBedroom !== "d") {
-            TextEngine.writeLine("Sorry this answer is not available, please choose a, b, c or d!");
+            GameEngine.writeLine("Sorry this answer is not available, please choose a, b, c or d!");
         }
     }
 
-    if(choiceBedroom === "a") TextEngine.writeLine("Oh no! You have been eaten by the shelve monster!");
+    if(choiceBedroom === "a") GameEngine.writeLine("Oh no! You have been eaten by the shelve monster!");
     else if(choiceBedroom === "b") {
-        TextEngine.writeLine("      \\  /      ");
-        TextEngine.writeLine("       \\/       ");
-        TextEngine.writeLine(" --------------- ");
-        TextEngine.writeLine("|-------------|O|");
-        TextEngine.writeLine("|             |*|");
-        TextEngine.writeLine("|             |-|");
-        TextEngine.writeLine("|             |+|");
-        TextEngine.writeLine("|---------------|");
-        TextEngine.writeLine(" --------------- ");
-        TextEngine.writeLine("Oh you need to choose which channel you want to watch.");
+        GameEngine.writeLine("      \\  /      ");
+        GameEngine.writeLine("       \\/       ");
+        GameEngine.writeLine(" --------------- ");
+        GameEngine.writeLine("|-------------|O|");
+        GameEngine.writeLine("|             |*|");
+        GameEngine.writeLine("|             |-|");
+        GameEngine.writeLine("|             |+|");
+        GameEngine.writeLine("|---------------|");
+        GameEngine.writeLine(" --------------- ");
+        GameEngine.writeLine("Oh you need to choose which channel you want to watch.");
     }
     else if(choiceBedroom === "c") {
-        TextEngine.writeLine("       *********               ");
-        TextEngine.writeLine("     **         **             ");
-        TextEngine.writeLine("     *   X   X   *            ");
-        TextEngine.writeLine("      *    O    *             ");
-        TextEngine.writeLine("       **      **             ");
-        TextEngine.writeLine("        *******              ");
-        TextEngine.writeLine("Oh no the water was poisonous. You died! GAME OVER!");
+        GameEngine.writeLine("       *********               ");
+        GameEngine.writeLine("     **         **             ");
+        GameEngine.writeLine("     *   X   X   *            ");
+        GameEngine.writeLine("      *    O    *             ");
+        GameEngine.writeLine("       **      **             ");
+        GameEngine.writeLine("        *******              ");
+        GameEngine.writeLine("Oh no the water was poisonous. You died! GAME OVER!");
     }
     else if(choiceBedroom === "d") {
-        TextEngine.writeLine("Finally! You went out of the bedroom. You are now in the bathroom.");
+        GameEngine.writeLine("Finally! You went out of the bedroom. You are now in the bathroom.");
     }
 }
 else if(choiceHouse === "b") {
-    TextEngine.writeLine("You are now in the garden! What do you want to choose?");
+    GameEngine.writeLine("You are now in the garden! What do you want to choose?");
 }
 }
 
