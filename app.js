@@ -74,7 +74,20 @@ async function appCreate() {
 
     if(choiceHouse === "a") {
         GameEngine.clear();
-        GameEngine.writeLine("                                                                    ----------------- ");  
+        const artRoom = `
+                                                                    -----------------
+ _______________                                    \\  /           |      !!       | 
+ |             |                              _______\\/______      |      !!       | 
+ |   w    c    |                |-|          |░░░░░░░░░░░| * |      |      !!       | 
+ |             |                | |          |░░░░░░░░░░░| * |      |      !!       | 
+ |          *  |   |------------------|      |░░░░░░░░░░░| * |      |    * !! *     | 
+ |             |   ||                ||   ___|░░░░░░░░░░░|___|__    |      !!       | 
+ |             |   ||                ||    |                  |     |      !!       | 
+ |             |   ||                ||    |                  |     |      !!       | 
+-|-------------|--------------------------------------------------------------------`;
+
+        GameEngine.showArt(artRoom);
+       /*GameEngine.writeLine("                                                                    ----------------- ");  
         GameEngine.writeLine(" _______________                                    \\  /           |      !!       | ");
         GameEngine.writeLine(" |             |                              _______\\/______      |      !!       | ");
         GameEngine.writeLine(" |   w    c    |                |-|          |░░░░░░░░░░░| * |      |      !!       | ");
@@ -83,7 +96,7 @@ async function appCreate() {
         GameEngine.writeLine(" |             |   ||                ||   ___|░░░░░░░░░░░|___|__    |      !!       | ");
         GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
         GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
-        GameEngine.writeLine("-|-------------|--------------------------------------------------------------------");
+        GameEngine.writeLine("-|-------------|--------------------------------------------------------------------");*/
 
         GameEngine.writeLine("\n\n");
         GameEngine.writeLine("You are now inside the house in the bedroom. What do you want to choose?");

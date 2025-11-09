@@ -67,6 +67,20 @@ function showInput() {
   };
 }
 
+TextEngine.showArt = writeLines;
+/*
+ * Displays ASCII art line by line.
+ * @param {string} artString - The ASCII art string with lines separated by newlines.
+ */
+function writeLines(artString, animate = false) {
+  if (!artString) return;
+
+  artString.split("\n").forEach((line) => {
+    const fixedLine = line.replace(/\\/g, "\\ "); // compensate for backslash javascript internal replacement
+    this.writeLine(fixedLine, animate);
+  });
+}
+
 TextEngine.writeLine = writeLine;
 /**
  * Writes a line of text to the container.
