@@ -18,12 +18,12 @@ async function appCreate() {
     GameEngine.writeLine("                                              ########################                             ");
     GameEngine.writeLine("                                                     by                                            ");
     GameEngine.writeLine("                                                      Danier                                       ");
-    GameEngine.writeLine("                    ___||_____                                                                     ");
-    GameEngine.writeLine("                   ///////////\\                                                                   ");
-    GameEngine.writeLine("                  ///////////  \\                                                                  ");
-    GameEngine.writeLine("                 ///////////    \\                                                                 ");
-    GameEngine.writeLine("                ///////////      \\                                                                ");
-    GameEngine.writeLine("          ______///////////_______\\_________                                                      ");
+    GameEngine.writeLine("            _______________________||_____                                                         ");
+    GameEngine.writeLine("           //////////////////////////////\\                                                        ");
+    GameEngine.writeLine("          //////////////////////////////  \\                                                       ");
+    GameEngine.writeLine("         ////////////////////////////// __ \\                                                      ");
+    GameEngine.writeLine("        ////////////////////////////// |__| \\                                                     ");
+    GameEngine.writeLine("       //////////////////////////////_ _ ____\\                                                    ");
     GameEngine.writeLine("         |    .-       -    .--.    .--.    .|                 ****                   *********    ");
     GameEngine.writeLine("         |   |   HAUNTED   |    |  |    |   .|               ** I I **              **  *   *  **  ");
     GameEngine.writeLine("         |   |    HOUSE    |    |  |    |   .|               *        *             *  <I> <I>  *  ");
@@ -31,11 +31,11 @@ async function appCreate() {
     GameEngine.writeLine("         |   |    |   |    |    |  |    |   .|                 **   **                **      **   ");
     GameEngine.writeLine("         |   |    |   |    |    |  |    |   .|                  *****                  *******     ");
     GameEngine.writeLine("         |   |    |   |    |    |  |    |   .|                                                     ");
-    GameEngine.writeLine("         |   |____|___|____|____|__|____|___.|_|                                                   ");
-    GameEngine.writeLine("         |______________________________________|                                                  ");
-    GameEngine.writeLine("                   ||  ||     ||  ||                                                               ");
-    GameEngine.writeLine("                 ==||==||==   ==||==||==                                                           ");
-    GameEngine.writeLine("                  ||  ||         ||  ||                                                            ");
+    GameEngine.writeLine("         |   |____|___|____|____|__|____|___.|                                                     ");
+    GameEngine.writeLine("         |___________________________________|                                                     ");
+    GameEngine.writeLine("               |__________|                                                                        ");
+    GameEngine.writeLine("             |________________|                                                                    ");
+    GameEngine.writeLine("          |________________________|                                                               ");
     GameEngine.writeLine("\n\n                                                                                               ");
     GameEngine.writeLine("                                               Press Enter Key To Start                            ");
     await GameEngine.readLineAsync()
