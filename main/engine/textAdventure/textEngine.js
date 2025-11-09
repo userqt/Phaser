@@ -5,8 +5,9 @@ TextEngine.textY = 20;
 TextEngine.inputQueue = [];
 TextEngine.gameStart = false;
 TextEngine.decorLayer = null;
-
+TextEngine.boxes = {};
 TextEngine.textContainer = null;
+TextEngine.globalFont = "Lucida Console";
 
 TextEngine.showInput = function () {
   if (this.inputWrapper) {
@@ -28,13 +29,13 @@ TextEngine.showInput = function () {
   const prompt = document.createElement("span");
   prompt.textContent = "■:>";
   prompt.style.color = "#00ff00";
-  prompt.style.fontFamily = "Courier, monospace";
+  prompt.style.fontFamily = this.globalFont;
   prompt.style.fontSize = "16px";
   prompt.style.marginRight = "4px";
 
   this.input = document.createElement("input");
   this.input.type = "text";
-  this.input.style.fontFamily = "Courier, monospace";
+  this.input.style.fontFamily = this.globalFont;
   this.input.style.fontSize = "16px";
   this.input.style.background = "none";
   this.input.style.color = "#00ff00";
@@ -60,11 +61,13 @@ TextEngine.showInput = function () {
 TextEngine.writeLine = function (line, animate = false) {
   if (!animate) {
     const textObj = this.scene.add.text(0, this.textY, line, {
-      fontFamily: "Courier, monospace",
+      fontFamily: this.globalFont,
       fontSize: "18px",
       color: "#00ff00",
       lineHeight: 18,
     });
+
+    textObj.origY = this.textY;
     this.textContainer.add(textObj);
     this.textY += 18;
     return;
@@ -72,11 +75,12 @@ TextEngine.writeLine = function (line, animate = false) {
 
   let charIndex = 0;
   const textObj = this.scene.add.text(0, this.textY, "", {
-    fontFamily: "Courier, monospace",
+    fontFamily: this.globalFont,
     fontSize: "18px",
     color: "#00ff00",
     lineHeight: 18,
   });
+  textObj.origY = this.textY;
   this.textContainer.add(textObj);
 
   const speed = 30;
@@ -154,7 +158,18 @@ TextEngine.preload = function () {
 };
 
 TextEngine.create = function () {
-  this.textContainer = this.scene.add.container(0, 0);
+  // this.textContainer = this.scene.add.container(0, 0);
+
+  this.textContainer = this.createBoxContainer(
+    "main",
+    0,
+    0,
+    this.scene.game.config.width,
+    this.scene.game.config.height,
+    "",
+    false,
+    false
+  );
 
   BaseEngine.create.call(this); // this calls the appCreate function
 
@@ -237,8 +252,8 @@ TextEngine.handleResize = function () {
 
     children.forEach((child) => {
       if (child.type === "Text") {
-        child.x = 20;
-        // optionally scale y based on h if you want vertical scaling
+        child.x *= scaleX;
+        child.y *= scaleY;
       }
     });
   }
@@ -248,6 +263,119 @@ TextEngine.handleResize = function () {
   this.textContainer.setScale(scale);
   this.textContainer.x = 0;
   this.textContainer.y = 0;
+
+  this.resizeBoxes();
 };
 
-// TODO -> add layers/overlays boxes to write things inside (stats, inventory, special indicators, etc.)
+TextEngine.resizeBoxes = function () {
+  const scale = this.textContainer.scaleX; // relative scale: match textContainer scale
+  for (const name in this.boxes) {
+    const box = this.boxes[name];
+    box.setScale(scale);
+    box.x = box.origX * scale;
+    box.y = box.origY * scale;
+  }
+};
+
+TextEngine.createBoxContainer = function (
+  name,
+  x,
+  y,
+  width,
+  height,
+  label,
+  hasDeco,
+  hasBackground
+) {
+  if (!this.boxes) {
+    this.boxes = {};
+  }
+
+  const container = this.scene.add.container(x, y);
+  container.origX = x;
+  container.origY = y;
+  container.origWidth = width;
+  container.origHeight = height;
+  container.boxWidth = width;
+  container.boxHeight = height;
+  container.lines = [];
+
+  if (hasBackground) {
+    const bg = this.scene.add.graphics();
+    bg.fillStyle(0x003300, 0.8);
+    bg.fillRect(0, 0, width, height);
+    container.add(bg);
+  }
+
+  if (hasDeco) {
+    const border = this.scene.add.graphics();
+    border.lineStyle(2, 0x00ff00);
+    border.strokeRect(0, 0, width, height);
+    container.add(border);
+  }
+
+  if (label) {
+    // Label
+    const labelText = this.scene.add.text(0, 0, label, {
+      fontFamily: this.globalFont,
+      fontSize: 16,
+      color: "#00ff00",
+      backgroundColor: "0x003300",
+    });
+
+    // Position label centered with padding
+    const padding = 6;
+    labelText.x = padding;
+    labelText.y = -labelText.height / 2; // slightly above top border
+    container.add(labelText);
+  }
+
+  this.boxes[name] = container;
+  return container;
+};
+
+TextEngine.writeLineToBox = function (name, line, animate = false) {
+  const box = this.boxes[name];
+  if (!box) {
+    return;
+  }
+
+  const yOffset = box.lines.length * 18 + 10;
+
+  const textObj = this.scene.add.text(10, yOffset, line, {
+    fontFamily: this.globalFont,
+    fontSize: 16,
+    color: "#00ff00",
+  });
+
+  box.add(textObj);
+  box.lines.push(textObj);
+
+  if (animate) {
+    textObj.text = "";
+    let charIndex = 0;
+    const addChar = () => {
+      if (charIndex < line.length) {
+        textObj.text += line[charIndex];
+        charIndex++;
+        setTimeout(addChar, 30);
+      }
+    };
+    addChar();
+  }
+};
+
+TextEngine.clearBox = function (name) {
+  const box = this.boxes[name];
+  if (!box) return;
+
+  box.lines.forEach((line) => line.destroy());
+  box.lines = [];
+};
+
+// TODO - save system
+// TODO - pop up system (nested popups)
+// TODO - play sound system
+// TODO - simple retro graphics system to display pixel art with limited palette
+// TODO - scene switching system
+// TODO - simple animation of sprites

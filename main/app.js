@@ -6,19 +6,24 @@ function appPreload() {
 async function appCreate() {
     // Initialize here
 
+    GameEngine.createBoxContainer("stats", 850, 50, 200, 60, "Player Stats", true, true);
+    GameEngine.writeLineToBox("stats", "Health: 100");
+    GameEngine.writeLineToBox("stats", "Mana: 50", true);
+
+
     GameEngine.writeLine("                                              ########################                             ");
     GameEngine.writeLine("                                              ####                ####                             ");
-    GameEngine.writeLine("                                              #### HAUNTED HOUSES ####                             ");
+    GameEngine.writeLine("                                              #### HAUNTED HOUSE  ####                             ");
     GameEngine.writeLine("                                              ####                ####                             ");
     GameEngine.writeLine("                                              ########################                             ");
     GameEngine.writeLine("                                                     by                                            ");
     GameEngine.writeLine("                                                      Danier                                       ");
-    GameEngine.writeLine("                    ___||___                                                                       ");
+    GameEngine.writeLine("                    ___||_____                                                                     ");
     GameEngine.writeLine("                   ///////////\\                                                                   ");
     GameEngine.writeLine("                  ///////////  \\                                                                  ");
     GameEngine.writeLine("                 ///////////    \\                                                                 ");
     GameEngine.writeLine("                ///////////      \\                                                                ");
-    GameEngine.writeLine("          ______///////////________\\_________                                                     ");
+    GameEngine.writeLine("          ______///////////_______\\_________                                                      ");
     GameEngine.writeLine("         |    .-       -    .--.    .--.    .|                 ****                   *********    ");
     GameEngine.writeLine("         |   |   HAUNTED   |    |  |    |   .|               ** I I **              **  *   *  **  ");
     GameEngine.writeLine("         |   |    HOUSE    |    |  |    |   .|               *        *             *  <I> <I>  *  ");
@@ -87,7 +92,7 @@ async function appCreate() {
         GameEngine.writeLine("c) drink water");
         GameEngine.writeLine("d) go to the bathroom");      
         GameEngine.writeLine("\n");
-        
+
         let choiceBedroom = "";
         while(choiceBedroom !== "a" && choiceBedroom !== "b" && choiceBedroom !== "c" && choiceBedroom !== "d") {
             choiceBedroom = (await GameEngine.readLineAsync()).toLowerCase();
