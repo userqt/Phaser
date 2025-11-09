@@ -19,7 +19,7 @@ async function appCreate() {
     GameEngine.writeLine("                                                     by                                            ");
     GameEngine.writeLine("                                                      Danier                                       ");
     GameEngine.writeLine("            _______________________||_____                                                         ");
-    GameEngine.writeLine("           //////////////////////////////\\                                                     ");
+    GameEngine.writeLine("           //////////////////////////////\\                                                        ");
     GameEngine.writeLine("          //////////////////////////////  \\                                                       ");
     GameEngine.writeLine("         ////////////////////////////// __ \\                                                      ");
     GameEngine.writeLine("        ////////////////////////////// |__| \\                                                     ");
@@ -42,11 +42,11 @@ async function appCreate() {
     GameEngine.clear();
 
     GameEngine.writeLine("\n\n");
-    GameEngine.writeLine("                                                                                                  ");
+    GameEngine.writeLine("                                                                                                   ");
     GameEngine.writeLine("      --                                                                                           ");
-    GameEngine.writeLine("     ----                                                                                      ");
-    GameEngine.writeLine("    -------| |                                                                                      ");
-    GameEngine.writeLine("   --------- |                                                                                      ");
+    GameEngine.writeLine("     ----                                                                                          ");
+    GameEngine.writeLine("    -------| |                                                                                     ");
+    GameEngine.writeLine("   --------- |                                                                                     ");
     GameEngine.writeLine("  ------------                                                                                     ");
     GameEngine.writeLine(" ----------------             ||||||                                                               ");
     GameEngine.writeLine("------------------|          ||||||||                                                              ");
