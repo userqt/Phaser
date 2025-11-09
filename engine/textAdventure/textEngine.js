@@ -7,6 +7,9 @@ TextEngine.gameStart = false;
 TextEngine.decorLayer = null;
 TextEngine.boxes = {};
 TextEngine.textContainer = null;
+TextEngine.popupLayer = null;
+TextEngine.popupStack = [];
+
 if (/Windows/i.test(navigator.platform)) {
   TextEngine.globalFont = "Lucida Console, monospace";
 } else {
@@ -226,10 +229,19 @@ TextEngine.create = create;
  * Also sets up automatic resize handling for the text engine.
  */
 function create() {
-  // this.textContainer = this.scene.add.container(0, 0);
-
   this.textContainer = this.createBoxContainer(
     "main",
+    0,
+    0,
+    this.scene.game.config.width,
+    this.scene.game.config.height,
+    "",
+    false,
+    false
+  );
+
+  this.popupLayer = this.createBoxContainer(
+    "popupLayer",
     0,
     0,
     this.scene.game.config.width,
@@ -492,10 +504,116 @@ function clearBox(name) {
   box.lines = [];
 }
 
+// POP UP SYSTEM
+TextEngine.showPopup = showPopup;
+TextEngine.hidePopup = hidePopup;
+
+/**
+ * Displays a modal pop-up box with text and an OK button.
+ * @param {string} message - The text to display inside the pop-up.
+ * @param {function} [onClose] - Function to call when the OK button is clicked.
+ * @param {string} [title='Message'] - Optional title for the pop-up box.
+ */
+function showPopup(
+  title = "Alert",
+  message,
+  x,
+  y,
+  width,
+  height,
+  onClose = () => {}
+) {
+  const gameWidth = this.scene.game.config.width;
+  const gameHeight = this.scene.game.config.height;
+  const boxWidth = Math.min(gameWidth * 0.8, width); // width or 80% of game width
+  const boxHeight = height;
+  const xPos = x ?? (gameWidth - boxWidth) / 2;
+  const yPos = y ?? (gameHeight - height) / 2;
+
+  // Create a semi-transparent overlay to block the background
+  const overlay = this.scene.add.graphics({ depth: 99 }); // Use 'const'
+  overlay.fillStyle(0x000000, 0.7);
+  overlay.fillRect(0, 0, gameWidth, gameHeight);
+  this.popupLayer.add(overlay);
+
+  // Create the pop-up box container
+  const boxName = `popup_${this.popupStack.length}`;
+  const popupBox = this.createBoxContainer(
+    boxName,
+    xPos,
+    yPos,
+    boxWidth,
+    boxHeight,
+    title,
+    true,
+    true
+  );
+
+  this.popupLayer.add(popupBox);
+
+  const availableWidth = boxWidth - 20;
+  const popupText = this.scene.add.text(10, 10, message, {
+    fontFamily: TextEngine.globalFont,
+    fontSize: 16,
+    color: "#00ff00",
+    wordWrap: {
+      width: availableWidth,
+      useAdvancedWrap: true,
+    },
+  });
+  popupBox.add(popupText);
+
+  const buttonText = this.scene.add
+    .text(boxWidth / 2, boxHeight - 30, " [ OK ] ", {
+      fontFamily: TextEngine.globalFont,
+      fontSize: 16,
+      color: "#00ff00",
+      backgroundColor: "#003300",
+    })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true })
+    .on("pointerdown", () => {
+      this.hidePopup();
+      onClose();
+    })
+    .on("pointerover", () => buttonText.setColor("#ffffff"))
+    .on("pointerout", () => buttonText.setColor("#00ff00"));
+
+  popupBox.add(buttonText);
+
+  this.popupStack.push({
+    name: boxName,
+    box: popupBox,
+    overlay: overlay,
+    onClose: onClose,
+  });
+}
+
+/**
+ * Hides and cleans up the pop-up box and overlay.
+ */
+function hidePopup() {
+  if (this.popupStack.length === 0) {
+    return;
+  }
+
+  const activePopup = this.popupStack.pop();
+
+  if (activePopup) {
+    if (this.boxes[activePopup.name]) {
+      this.clearBox(activePopup.name);
+      this.boxes[activePopup.name].destroy();
+      delete this.boxes[activePopup.name];
+    }
+
+    activePopup.overlay.destroy();
+  }
+}
+
 // TODO - scrolling on mobile
 // TODO - save system
-// TODO - pop up system (nested popups)
 // TODO - play sound system
 // TODO - simple retro graphics system to display pixel art with limited palette
 // TODO - scene switching system
 // TODO - simple animation of sprites
+// TODO - combat system
