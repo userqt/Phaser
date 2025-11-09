@@ -277,7 +277,29 @@ TextEngine.resizeBoxes = function () {
   }
 };
 
-TextEngine.createBoxContainer = function (
+TextEngine.createBoxContainer = createBoxContainer;
+
+/**
+ * Creates a text box container.
+ * @param {string} name Unique box name.
+ * @param {number} x X position.
+ * @param {number} y Y position.
+ * @param {number} width Box width.
+ * @param {number} height Box height.
+ * @param {string} label Optional label text.
+ * @param {boolean} hasDeco Whether to show a border.
+ * @param {boolean} hasBackground Whether to show background fill.
+ * @returns {Phaser.GameObjects.Container & {
+ *   origX: number,
+ *   origY: number,
+ *   origWidth: number,
+ *   origHeight: number,
+ *   boxWidth: number,
+ *   boxHeight: number,
+ *   lines: Phaser.GameObjects.Text[]
+ * }}
+ */
+function createBoxContainer(
   name,
   x,
   y,
@@ -332,7 +354,7 @@ TextEngine.createBoxContainer = function (
 
   this.boxes[name] = container;
   return container;
-};
+}
 
 TextEngine.writeLineToBox = function (name, line, animate = false) {
   const box = this.boxes[name];
