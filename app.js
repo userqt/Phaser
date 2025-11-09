@@ -19,7 +19,7 @@ async function appCreate() {
     GameEngine.writeLine("                                                     by                                            ");
     GameEngine.writeLine("                                                      Danier                                       ");
     GameEngine.writeLine("            _______________________||_____                                                         ");
-    GameEngine.writeLine("           //////////////////////////////\\                                                        ");
+    GameEngine.writeLine("           //////////////////////////////\\                                                     ");
     GameEngine.writeLine("          //////////////////////////////  \\                                                       ");
     GameEngine.writeLine("         ////////////////////////////// __ \\                                                      ");
     GameEngine.writeLine("        ////////////////////////////// |__| \\                                                     ");
@@ -34,7 +34,7 @@ async function appCreate() {
     GameEngine.writeLine("         |   |____|___|____|____|__|____|___.|                                                     ");
     GameEngine.writeLine("         |___________________________________|                                                     ");
     GameEngine.writeLine("               |__________|                                                                        ");
-    GameEngine.writeLine("             |________________|                                                                    ");
+    GameEngine.writeLine("             |_________________|                                                                   ");
     GameEngine.writeLine("          |________________________|                                                               ");
     GameEngine.writeLine("\n\n                                                                                               ");
     GameEngine.writeLine("                                               Press Enter Key To Start                            ");
@@ -42,19 +42,19 @@ async function appCreate() {
     GameEngine.clear();
 
     GameEngine.writeLine("\n\n");
-    GameEngine.writeLine("      -");
-    GameEngine.writeLine("      --");
-    GameEngine.writeLine("     ----");
-    GameEngine.writeLine("    -------");
-    GameEngine.writeLine("   ---------");
-    GameEngine.writeLine("  ------------");
-    GameEngine.writeLine(" ----------------             ||||||           ");
-    GameEngine.writeLine("------------------|          ||||||||          ");
-    GameEngine.writeLine("----------I  I----|           ||||||           ");
-    GameEngine.writeLine("----------I  I----|             ||             ");
-    GameEngine.writeLine("------------------|             ||             ");
-    GameEngine.writeLine("----|  |----------|             ||             ");
-    GameEngine.writeLine("----|  |----------||||||||||||||||||||||||||||");
+    GameEngine.writeLine("                                                                                                  ");
+    GameEngine.writeLine("      --                                                                                           ");
+    GameEngine.writeLine("     ----                                                                                      ");
+    GameEngine.writeLine("    -------| |                                                                                      ");
+    GameEngine.writeLine("   --------- |                                                                                      ");
+    GameEngine.writeLine("  ------------                                                                                     ");
+    GameEngine.writeLine(" ----------------             ||||||                                                               ");
+    GameEngine.writeLine("------------------|          ||||||||                                                              ");
+    GameEngine.writeLine("----------I  I----|           ||||||                                                               ");
+    GameEngine.writeLine("----------I  I----|             ||                                                                 ");
+    GameEngine.writeLine("------------------|             ||                                                                 ");
+    GameEngine.writeLine("----|  |----------|             ||                                                                 ");
+    GameEngine.writeLine("----|  |----------||||||||||||||||||||||||||||                                                     ");
 
     GameEngine.writeLine("\n\n");
     GameEngine.writeLine("Hello adventurer");
@@ -74,15 +74,15 @@ async function appCreate() {
 
     if(choiceHouse === "a") {
         GameEngine.clear();
-        GameEngine.writeLine("                                                                  ----------------- ");  
-        GameEngine.writeLine("  -------------                                                   |      !!       | ");
-        GameEngine.writeLine(" |             |                                                  |      !!       | ");
-        GameEngine.writeLine(" |   w    c    |                |-|                               |      !!       | ");
-        GameEngine.writeLine(" |             |                | |                V              |      !!       | ");
-        GameEngine.writeLine(" |          *  |   |------------------|     |--------------|--|   |   *  !! *     | ");
-        GameEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
-        GameEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
-        GameEngine.writeLine(" |             |   ||                ||     |              |* |   |      !!       | ");
+        GameEngine.writeLine("                                                                    ----------------- ");  
+        GameEngine.writeLine(" _______________                                     \  /           |      !!       | ");
+        GameEngine.writeLine(" |             |                             _________\/______      |      !!       | ");
+        GameEngine.writeLine(" |   w    c    |                |-|          |░░░░░░░░░░░| * |      |      !!       | ");
+        GameEngine.writeLine(" |             |                | |          |░░░░░░░░░░░| * |      |      !!       | ");
+        GameEngine.writeLine(" |          *  |   |------------------|      |░░░░░░░░░░░| * |      |    * !! *     | ");
+        GameEngine.writeLine(" |             |   ||                ||   ___|░░░░░░░░░░░|___|__    |      !!       | ");
+        GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
+        GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
         GameEngine.writeLine("-|-------------|--------------------------------------------------------------------");
 
         GameEngine.writeLine("\n\n");
