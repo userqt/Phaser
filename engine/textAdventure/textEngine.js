@@ -7,7 +7,7 @@ TextEngine.gameStart = false;
 TextEngine.decorLayer = null;
 TextEngine.boxes = {};
 TextEngine.textContainer = null;
-TextEngine.globalFont = "Lucida Console";
+TextEngine.globalFont = "RetrocideMono, monospace";
 
 TextEngine.showInput = function () {
   if (this.inputWrapper) {
@@ -395,6 +395,7 @@ TextEngine.clearBox = function (name) {
   box.lines = [];
 };
 
+// TODO - scrolling on mobile
 // TODO - save system
 // TODO - pop up system (nested popups)
 // TODO - play sound system

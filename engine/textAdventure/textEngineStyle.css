@@ -1,0 +1,12 @@
+@font-face {
+  font-family: "RetrocideMono";
+  src: url("./fonts/Retrocide.woff2") format("woff2"),
+    url("./fonts/Retrocide.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "RetrocideMono", monospace;
+}
