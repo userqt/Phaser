@@ -10,6 +10,18 @@ async function appCreate() {
     GameEngine.writeLineToBox("stats", "Health: 100");
     GameEngine.writeLineToBox("stats", "Mana: 50", true);
 
+    TextEngine.showPopup("Alert!", "Game Over! Press OK to restart!", 100 , 100, 400, 200, () => {
+   console.log("Popup closed, restarting game...");
+    // Add your game logic here
+ }, );
+
+ TextEngine.showPopup("Alert!", "New Game Press OK to restart!", 150, 150, 400, 200, () => {
+   console.log("Popup closed, restarting game...");
+    // Add your game logic here
+ }, );
+
+ await GameEngine.readLineAsync()
+
 
     GameEngine.writeLine("                                              ########################                             ");
     GameEngine.writeLine("                                              ####                ####                             ");
