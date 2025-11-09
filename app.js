@@ -14,12 +14,18 @@ async function appCreate() {
    console.log("Popup closed, restarting game...");
     // Add your game logic here
  }, );
+const smiley8 = [
+  [0,0,1,1,1,1,0,0],
+  [0,1,1,1,1,1,1,0],
+  [1,1,0,1,1,0,1,1],
+  [1,0,0,1,1,0,0,1],
+  [1,1,1,3,3,1,1,1],
+  [1,4,1,1,1,1,4,1],
+  [0,1,4,4,4,4,1,0],
+  [0,0,1,1,1,1,0,0]
+];
 
- TextEngine.showPopup("Alert!", "New Game Press OK to restart!", 150, 150, 400, 200, () => {
-   console.log("Popup closed, restarting game...");
-    // Add your game logic here
- }, );
-
+GameEngine.drawPixelArt(smiley8, 50, 50);
  await GameEngine.readLineAsync()
 
 

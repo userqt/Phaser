@@ -1,15 +1,31 @@
 window.TextEngine = Object.create(BaseEngine);
 
+// input
 TextEngine.input = null;
+
+// ascii system
 TextEngine.textY = 20;
 TextEngine.inputQueue = [];
 TextEngine.gameStart = false;
 TextEngine.decorLayer = null;
 TextEngine.boxes = {};
 TextEngine.textContainer = null;
+
+// pop ups
 TextEngine.popupLayer = null;
 TextEngine.popupStack = [];
 
+// pixel art
+TextEngine.pixelLayer = null;
+TextEngine.greenPalette = [
+  "#003300",
+  "#006600",
+  "#009900",
+  "#00cc00",
+  "#00ff00",
+];
+
+// fonts
 if (/Windows/i.test(navigator.platform)) {
   TextEngine.globalFont = "Lucida Console, monospace";
 } else {
@@ -504,15 +520,19 @@ function clearBox(name) {
   box.lines = [];
 }
 
-// POP UP SYSTEM
+// POP UP SYSTEM /////////////////////////////////////////////////////////////////////////
 TextEngine.showPopup = showPopup;
 TextEngine.hidePopup = hidePopup;
 
 /**
  * Displays a modal pop-up box with text and an OK button.
+ * @param {string} [title='Alert'] - Optional title for the pop-up box.
  * @param {string} message - The text to display inside the pop-up.
+ * @param {number} [x] - X position of the pop-up; defaults to centered.
+ * @param {number} [y] - Y position of the pop-up; defaults to centered.
+ * @param {number} [width] - Width of the pop-up box; defaults to 80% of game width.
+ * @param {number} [height] - Height of the pop-up box.
  * @param {function} [onClose] - Function to call when the OK button is clicked.
- * @param {string} [title='Message'] - Optional title for the pop-up box.
  */
 function showPopup(
   title = "Alert",
@@ -608,6 +628,40 @@ function hidePopup() {
 
     activePopup.overlay.destroy();
   }
+}
+
+// PIXEL ART SYSTEM /////////////////////////////////////////////////////////////////////////
+TextEngine.drawPixelArt = drawPixelArt;
+
+function drawPixelArt(pixels, startX = 50, startY = 50) {
+  pixels.forEach((row, rowIndex) => {
+    row.forEach((colorIndex, colIndex) => {
+      if (colorIndex !== 0) {
+        // 0 = empty
+        const color = this.greenPalette[colorIndex] || "#00ff00";
+        const pixel = TextEngine.scene.add.text(
+          startX + colIndex * 10,
+          startY + rowIndex * 10,
+          "■",
+          { fontFamily: TextEngine.globalFont, fontSize: "10px", color: color }
+        );
+
+        if (!this.pixelLayer) {
+          this.pixelLayer = this.createBoxContainer(
+            "pixelLayer",
+            0,
+            0,
+            this.scene.game.config.width,
+            this.scene.game.config.height,
+            "",
+            false,
+            false
+          );
+        }
+        this.pixelLayer.add(pixel);
+      }
+    });
+  });
 }
 
 // TODO - scrolling on mobile
