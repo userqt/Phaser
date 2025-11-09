@@ -7,7 +7,11 @@ TextEngine.gameStart = false;
 TextEngine.decorLayer = null;
 TextEngine.boxes = {};
 TextEngine.textContainer = null;
-TextEngine.globalFont = "RetrocideMono, monospace";
+if (/Windows/i.test(navigator.platform)) {
+  TextEngine.globalFont = "Lucida Console, monospace";
+} else {
+  TextEngine.globalFont = "'Retrocide', monospace";
+}
 
 TextEngine.showInput = function () {
   if (this.inputWrapper) {
@@ -29,13 +33,13 @@ TextEngine.showInput = function () {
   const prompt = document.createElement("span");
   prompt.textContent = "■:>";
   prompt.style.color = "#00ff00";
-  prompt.style.fontFamily = this.globalFont;
+  prompt.style.fontFamily = TextEngine.globalFont;
   prompt.style.fontSize = "16px";
   prompt.style.marginRight = "4px";
 
   this.input = document.createElement("input");
   this.input.type = "text";
-  this.input.style.fontFamily = this.globalFont;
+  this.input.style.fontFamily = TextEngine.globalFont;
   this.input.style.fontSize = "16px";
   this.input.style.background = "none";
   this.input.style.color = "#00ff00";
@@ -61,7 +65,7 @@ TextEngine.showInput = function () {
 TextEngine.writeLine = function (line, animate = false) {
   if (!animate) {
     const textObj = this.scene.add.text(0, this.textY, line, {
-      fontFamily: this.globalFont,
+      fontFamily: TextEngine.globalFont,
       fontSize: "18px",
       color: "#00ff00",
       lineHeight: 18,
@@ -75,7 +79,7 @@ TextEngine.writeLine = function (line, animate = false) {
 
   let charIndex = 0;
   const textObj = this.scene.add.text(0, this.textY, "", {
-    fontFamily: this.globalFont,
+    fontFamily: TextEngine.globalFont,
     fontSize: "18px",
     color: "#00ff00",
     lineHeight: 18,
@@ -339,7 +343,7 @@ function createBoxContainer(
   if (label) {
     // Label
     const labelText = this.scene.add.text(0, 0, label, {
-      fontFamily: this.globalFont,
+      fontFamily: TextEngine.globalFont,
       fontSize: 16,
       color: "#00ff00",
       backgroundColor: "0x003300",
@@ -365,7 +369,7 @@ TextEngine.writeLineToBox = function (name, line, animate = false) {
   const yOffset = box.lines.length * 18 + 10;
 
   const textObj = this.scene.add.text(10, yOffset, line, {
-    fontFamily: this.globalFont,
+    fontFamily: TextEngine.globalFont,
     fontSize: 16,
     color: "#00ff00",
   });
