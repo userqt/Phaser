@@ -75,8 +75,8 @@ async function appCreate() {
     if(choiceHouse === "a") {
         GameEngine.clear();
         GameEngine.writeLine("                                                                    ----------------- ");  
-        GameEngine.writeLine(" _______________                                     \  /           |      !!       | ");
-        GameEngine.writeLine(" |             |                             _________\/______      |      !!       | ");
+        GameEngine.writeLine(" _______________                                    \\  /           |      !!       | ");
+        GameEngine.writeLine(" |             |                              _______\\/______      |      !!       | ");
         GameEngine.writeLine(" |   w    c    |                |-|          |░░░░░░░░░░░| * |      |      !!       | ");
         GameEngine.writeLine(" |             |                | |          |░░░░░░░░░░░| * |      |      !!       | ");
         GameEngine.writeLine(" |          *  |   |------------------|      |░░░░░░░░░░░| * |      |    * !! *     | ");
