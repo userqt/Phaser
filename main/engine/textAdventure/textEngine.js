@@ -13,17 +13,22 @@ if (/Windows/i.test(navigator.platform)) {
   TextEngine.globalFont = "'Retrocide', monospace";
 }
 
-TextEngine.showInput = function () {
+TextEngine.showInput = showInput;
+/*
+ * Displays the input box for user text input. Handles user input.
+ */
+function showInput() {
   if (this.inputWrapper) {
     return;
   }
 
-  const rect = this.scene.game.canvas.getBoundingClientRect();
-
+  const game = this.scene.game;
   this.inputWrapper = document.createElement("div");
   this.inputWrapper.style.position = "absolute";
-  this.inputWrapper.style.left = rect.left + 20 + "px";
-  this.inputWrapper.style.top = rect.top + 550 + "px";
+  this.inputWrapper.style.left = game.canvas.offsetLeft + 20 + "px";
+  this.inputWrapper.style.top =
+    game.canvas.offsetTop + game.canvas.height - 50 + "px";
+
   this.inputWrapper.style.display = "flex";
   this.inputWrapper.style.alignItems = "center";
   this.inputWrapper.style.backgroundColor = "#003300";
@@ -60,11 +65,17 @@ TextEngine.showInput = function () {
       engine.input.value = "";
     }
   };
-};
+}
 
-TextEngine.writeLine = function (line, animate = false) {
+TextEngine.writeLine = writeLine;
+/**
+ * Writes a line of text to the container.
+ * @param {string} line - Text to display.
+ * @param {boolean} [animate=false] - If true, shows text character by character.
+ */
+function writeLine(line, animate = false) {
   if (!animate) {
-    const textObj = this.scene.add.text(0, this.textY, line, {
+    const textObj = this.scene.add.text(0, this.textY, "  " + line, {
       fontFamily: TextEngine.globalFont,
       fontSize: "18px",
       color: "#00ff00",
@@ -98,17 +109,28 @@ TextEngine.writeLine = function (line, animate = false) {
     }
   };
   addChar();
-};
+}
 
-TextEngine.readLine = function () {
+TextEngine.readLine = readLine;
+/**
+ * Reads the next input from the queue.
+ * @returns {string} - The next input in lowercase, or an empty string if none.
+ */
+function readLine() {
   if (this.hasInput()) {
     const value = this.inputQueue.shift();
     return value ? value.toLowerCase() : "";
   }
   return "";
-};
+}
 
-TextEngine.readLineAsync = function () {
+TextEngine.readLineAsync = readLineAsync;
+/**
+ * Reads the next input from the queue asynchronously.
+ * Waits until input is available.
+ * @returns {Promise<string>} - Resolves with the next input in lowercase, or an empty string if none.
+ */
+function readLineAsync() {
   return new Promise((resolve) => {
     const checkInput = () => {
       if (this.hasInput()) {
@@ -119,13 +141,22 @@ TextEngine.readLineAsync = function () {
     };
     checkInput();
   });
-};
+}
 
-TextEngine.hasInput = function () {
+TextEngine.hasInput = hasInput;
+/**
+ * Checks if there is any input in the queue.
+ * @returns {boolean} - True if input is available, false otherwise.
+ */
+function hasInput() {
   return this.inputQueue.length > 0;
-};
+}
 
-TextEngine.clear = function () {
+TextEngine.clear = clear;
+/**
+ * Clears all text from the main text container and resets the vertical position.
+ */
+function clear() {
   BaseEngine.clear.call(this);
 
   const children = [...this.textContainer.list];
@@ -134,24 +165,36 @@ TextEngine.clear = function () {
   });
 
   this.textY = 20;
-};
+}
 
-TextEngine.clearLastLine = function () {
+TextEngine.clearLastLine = clearLastLine;
+/**
+ * Removes the last line of text from the container and adjusts the vertical position.
+ */
+function clearLastLine() {
   const children = this.textContainer.list;
   if (children.length > 0) {
     const lastChild = children[children.length - 1];
     lastChild.destroy();
     this.textY -= 18;
   }
-};
+}
 
-TextEngine.startGame = function () {
+TextEngine.startGame = startGame;
+/**
+ * Starts the game by setting the start flag, adding initial input, and showing the input field.
+ */
+function startGame() {
   this.gameStart = true;
   this.inputQueue.push(" ");
   this.showInput();
-};
+}
 
-TextEngine.preload = function () {
+TextEngine.preload = preload;
+/**
+ * Phaser's built-in preload function to load assets.
+ */
+function preload() {
   BaseEngine.preload.call(this);
 
   let xmlBlob = new Blob([window.retroFont_XML], { type: "text/xml" });
@@ -159,9 +202,16 @@ TextEngine.preload = function () {
 
   this.scene.load.bitmapFont("pixelfont", window.retroFontBase64_PNG, xmlUrl);
   this.scene.load.on("complete", () => {});
-};
+}
 
-TextEngine.create = function () {
+TextEngine.create = create;
+/**
+ * Phaser's built-in create method.
+ * Sets up the game scene, including the main text container, decorations, and input handlers.
+ * Handles both mobile (pointer) and desktop (keyboard) start interactions.
+ * Also sets up automatic resize handling for the text engine.
+ */
+function create() {
   // this.textContainer = this.scene.add.container(0, 0);
 
   this.textContainer = this.createBoxContainer(
@@ -190,32 +240,42 @@ TextEngine.create = function () {
       startGameHandler();
     };
     this.scene.game.canvas.addEventListener("pointerdown", mobileHandler);
-  } else {
-    const desktopHandler = (e) => {
-      if (e.key === "Enter") {
-        document.removeEventListener("keydown", desktopHandler);
-        startGameHandler();
-      }
-    };
-    document.addEventListener("keydown", desktopHandler);
   }
+
+  const desktopHandler = (e) => {
+    if (e.key === "Enter") {
+      document.removeEventListener("keydown", desktopHandler);
+      startGameHandler();
+    }
+  };
+  document.addEventListener("keydown", desktopHandler);
 
   TextEngine.handleResize();
 
   window.addEventListener("resize", () => {
     TextEngine.handleResize();
   });
-};
+}
 
-TextEngine.update = function () {
+TextEngine.update = update;
+/*
+ * Phaser's built-in update method.
+ * Only processes updates if the game has started.
+ */
+function update() {
   if (!this.gameStart) {
     return;
   }
 
   BaseEngine.update.call(this);
-};
+}
 
-TextEngine.createBoundDecoration = function () {
+TextEngine.createBoundDecoration = createBoundDecoration;
+
+/*
+ * Creates decorative borders around the game canvas.
+ */
+function createBoundDecoration() {
   const graphics = this.scene.add.graphics();
   const canvas = this.scene.game.canvas;
 
@@ -229,9 +289,13 @@ TextEngine.createBoundDecoration = function () {
   graphics.fillRect(canvas.width - 10, canvas.height - 10, 10, 10);
 
   this.decorLayer = graphics;
-};
+}
 
-TextEngine.handleResize = function () {
+TextEngine.handleResize = handleResize;
+/*
+ * Handles resizing of the game canvas and adjusts text engine elements accordingly.
+ */
+function handleResize() {
   const game = this.scene.game;
   const parent = game.canvas.parentNode;
   const w = parent.clientWidth;
@@ -269,9 +333,13 @@ TextEngine.handleResize = function () {
   this.textContainer.y = 0;
 
   this.resizeBoxes();
-};
+}
 
-TextEngine.resizeBoxes = function () {
+TextEngine.resizeBoxes = resizeBoxes;
+/**
+ * Resizes the box containers to match the screen size.
+ */
+function resizeBoxes() {
   const scale = this.textContainer.scaleX; // relative scale: match textContainer scale
   for (const name in this.boxes) {
     const box = this.boxes[name];
@@ -279,10 +347,9 @@ TextEngine.resizeBoxes = function () {
     box.x = box.origX * scale;
     box.y = box.origY * scale;
   }
-};
+}
 
 TextEngine.createBoxContainer = createBoxContainer;
-
 /**
  * Creates a text box container.
  * @param {string} name Unique box name.
@@ -360,7 +427,14 @@ function createBoxContainer(
   return container;
 }
 
-TextEngine.writeLineToBox = function (name, line, animate = false) {
+TextEngine.writeLineToBox = writeLineToBox;
+/*
+ * Writes a line of text to a specified box container.
+ * @param {string} name - The name of the target text box.
+ * @param {string} line - The text to display.
+ * @param {boolean} [animate=false] - If true, displays the text character by character.
+ */
+function writeLineToBox(name, line, animate = false) {
   const box = this.boxes[name];
   if (!box) {
     return;
@@ -389,15 +463,20 @@ TextEngine.writeLineToBox = function (name, line, animate = false) {
     };
     addChar();
   }
-};
+}
 
-TextEngine.clearBox = function (name) {
+TextEngine.clearBox = clearBox;
+/**
+ * Clears all text from a named text box.
+ * @param {string} name - The name of the box to clear.
+ */
+function clearBox(name) {
   const box = this.boxes[name];
   if (!box) return;
 
   box.lines.forEach((line) => line.destroy());
   box.lines = [];
-};
+}
 
 // TODO - scrolling on mobile
 // TODO - save system
