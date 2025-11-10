@@ -667,7 +667,6 @@ function drawPixelArt(pixels, startX = 50, startY = 50) {
 // TODO - scrolling on mobile
 // TODO - save system
 // TODO - play sound system
-// TODO - simple retro graphics system to display pixel art with limited palette
 // TODO - scene switching system
 // TODO - simple animation of sprites
 // TODO - combat system

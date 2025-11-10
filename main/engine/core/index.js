@@ -1,5 +1,7 @@
 window.Engines = {
   TextEngine: window.TextEngine,
   // add more engines here
-  //e.g. Runner: window.RunnerEngine
+  //e.g. Basics programming: window.BasicsEngine - engine to teach basics of programming
+  //e.g. Quest: window.QuestEngine - point and click adventure engine
+  //e.g. Runner: window.RunnerEngine - vertical platform runner engine with coins and obstacles
 };
