@@ -13,16 +13,21 @@ window.BaseEngine = {
     this.appCreate = app.create || function () {};
     this.appUpdate = app.update || function () {};
   },
+
   preload() {
     this.appPreload();
   },
+
   create() {
     this.appCreate();
   },
+
   update() {
     this.appUpdate();
   },
+
   clear() {},
+  
   getEngineSceneMethods(app) {
     const engine = this;
     return {

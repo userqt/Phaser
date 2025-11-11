@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Text Adventure Engine Tests</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+    <script src="../../core/baseEngine.js"></script>
+    <script src="../../textAdventure/textEngine.js"></script>
+    <script src="../../core/index.js"></script>
+
+    <!-- test scripts -->
+    <script src="testAnimateASCII.js"></script>
+    <script src="testBoxContainer.js"></script>
+    <script src="testPopup.js"></script>
+    <script src="testPixelArt.js"></script>
+
+    <script>
+      window.GameEngine = window.Engines.TextEngine;
+      const GameEngine = window.GameEngine;
+      const app = {
+        preload: function () {},
+        create: function () {
+          const engine = GameEngine;
+          const scene = engine.scene;
+
+          scene.time.delayedCall(0, async () => {
+            if (typeof testBoxContainer === "function") {
+              await testBoxContainer(engine);
+              engine.clear();
+            }
+
+            if (typeof testPopup === "function") {
+              await testPopup(engine);
+              engine.clear();
+            }
+
+            if (typeof testPixelArt === "function") {
+              await testPixelArt(engine);
+              engine.clear();
+            }
+
+            if (typeof testAnimateASCII === "function") {
+              await testAnimateASCII(engine);
+              engine.clear();
+            }
+
+            // todo: add more tests here
+          });
+        },
+        update: function () {},
+      };
+
+      new Phaser.Game({
+        width: 980,
+        height: 640,
+        type: Phaser.AUTO,
+        backgroundColor: "#000000",
+        scene: GameEngine.getEngineSceneMethods(app),
+      });
+    </script>
+  </head>
+  <body></body>
+</html>
