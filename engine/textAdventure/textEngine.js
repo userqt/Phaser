@@ -664,8 +664,49 @@ function drawPixelArt(pixels, startX = 50, startY = 50) {
   });
 }
 
+TextEngine.animateASCII = animateASCII;
+/**
+ * Animates a sequence of ASCII art frames at specified coordinates.
+ *
+ * @async
+ * @function animateASCII
+ * @param {string[]} frames - Array of ASCII art frames to display.
+ * @param {number} [startX=50] - X coordinate where animation starts.
+ * @param {number} [startY=50] - Y coordinate where animation starts.
+ * @param {number} [delay=200] - Delay in milliseconds between frame transitions.
+ * @description
+ * Clears the previous frame, renders the next ASCII frame line by line
+ * at the given position, and repeats until all frames have been displayed.
+ */
+async function animateASCII(frames, startX = 50, startY = 50, delay = 200) {
+  const animContainer = this.createBoxContainer(
+    "anim",
+    startX,
+    startY,
+    0,
+    0,
+    "",
+    false,
+    false
+  );
+
+  for (let i = 0; i < frames.length; i++) {
+    animContainer.list.forEach((obj) => obj.destroy());
+    animContainer.lines = [];
+
+    frames[i].split("\n").forEach((line, rowIndex) => {
+      const textObj = this.scene.add.text(0, rowIndex * 16, line, {
+        fontFamily: this.globalFont,
+        fontSize: "16px",
+        color: "#00ff00",
+      });
+      animContainer.add(textObj);
+      animContainer.lines.push(textObj);
+    });
+
+    await new Promise((r) => setTimeout(r, delay));
+  }
+}
+
 // TODO - scrolling on mobile
 // TODO - play sound system
-// TODO - scene switching system
-// TODO - simple animation of sprites
-// TODO - combat system
