@@ -230,10 +230,10 @@ TextEngine.preload = preload;
 function preload() {
   BaseEngine.preload.call(this);
 
-  let xmlBlob = new Blob([window.retroFont_XML], { type: "text/xml" });
-  let xmlUrl = URL.createObjectURL(xmlBlob);
+  //let xmlBlob = new Blob([window.retroFont_XML], { type: "text/xml" });
+  //let xmlUrl = URL.createObjectURL(xmlBlob);
+  //this.scene.load.bitmapFont("pixelfont", window.retroFontBase64_PNG, xmlUrl);
 
-  this.scene.load.bitmapFont("pixelfont", window.retroFontBase64_PNG, xmlUrl);
   this.scene.load.on("complete", () => {});
 }
 
