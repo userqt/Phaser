@@ -665,7 +665,6 @@ function drawPixelArt(pixels, startX = 50, startY = 50) {
 }
 
 // TODO - scrolling on mobile
-// TODO - save system
 // TODO - play sound system
 // TODO - scene switching system
 // TODO - simple animation of sprites
