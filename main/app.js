@@ -6,6 +6,39 @@ function appPreload() {
 async function appCreate() {
     // Initialize here
 
+    const doorFrames = [
+  `
+  +---+
+  |   |
+  |   |
+  |   |
+  +---+
+  `,
+  `
+  +---+
+  |   |
+  | / |
+  |   |
+  +---+
+  `,
+  `
+  +---+
+  |   |
+  | / |
+  |/  |
+  +---+
+  `,
+  `
+  +---+
+  |   |
+  |   |
+  |   |
+  +---+
+  `
+];
+
+await TextEngine.animateASCII(doorFrames, 300);
+
     GameEngine.createBoxContainer("stats", 850, 50, 200, 60, "Player Stats", true, true);
     GameEngine.writeLineToBox("stats", "Health: 100");
     GameEngine.writeLineToBox("stats", "Mana: 50", true);
