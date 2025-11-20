@@ -37,13 +37,13 @@ async function appCreate() {
   `
 ];
 
-await TextEngine.animateASCII(doorFrames, 300);
+await GameEngine.animateASCII(doorFrames, 300);
 
     GameEngine.createBoxContainer("stats", 850, 50, 200, 60, "Player Stats", true, true);
     GameEngine.writeLineToBox("stats", "Health: 100");
     GameEngine.writeLineToBox("stats", "Mana: 50", true);
 
-    TextEngine.showPopup("Alert!", "Game Over! Press OK to restart!", 100 , 100, 400, 200, () => {
+    GameEngine.showPopup("Alert!", "Game Over! Press OK to restart!", 100 , 100, 400, 200, () => {
    console.log("Popup closed, restarting game...");
     // Add your game logic here
  }, );

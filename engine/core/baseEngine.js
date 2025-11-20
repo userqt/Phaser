@@ -1,33 +1,35 @@
-window.BaseEngine = {
-  scene: null,
-  appPreload: null,
-  appCreate: null,
-  appUpdate: null,
-  saveData: {},
-  saveKey: "SaveUserData",
-  autoKeyCounter: 0,
+class BaseEngine {
+  constructor() {
+    this.scene = null;
+    this.appPreload = null;
+    this.appCreate = null;
+    this.appUpdate = null;
+    this.saveData = {};
+    this.saveKey = "SaveUserData";
+    this.autoKeyCounter = 0;
+  }
 
   init(scene, app) {
     this.scene = scene;
     this.appPreload = app.preload || function () {};
     this.appCreate = app.create || function () {};
     this.appUpdate = app.update || function () {};
-  },
+  }
 
   preload() {
     this.appPreload();
-  },
+  }
 
   create() {
     this.appCreate();
-  },
+  }
 
   update() {
     this.appUpdate();
-  },
+  }
 
-  clear() {},
-  
+  clear() {}
+
   getEngineSceneMethods(app) {
     const engine = this;
     return {
@@ -42,7 +44,7 @@ window.BaseEngine = {
         engine.update();
       },
     };
-  },
+  }
 
   //////////////////////////////////// SAVE SYSTEM ///////////////////////////////////////
   /**
@@ -78,7 +80,7 @@ window.BaseEngine = {
     }
 
     localStorage.setItem(this.saveKey, JSON.stringify(this.saveData));
-  },
+  }
 
   /**
    * Retrieves a saved value from the engine.
@@ -114,7 +116,7 @@ window.BaseEngine = {
 
       return obj;
     }
-  },
+  }
 
   /**
    * Clears all saved data from memory and localStorage.
@@ -124,5 +126,7 @@ window.BaseEngine = {
     this.saveData = {};
     this.autoKeyCounter = 0;
     localStorage.removeItem(this.saveKey);
-  },
-};
+  }
+}
+
+window.BaseEngine = BaseEngine;
