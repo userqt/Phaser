@@ -1,5 +1,5 @@
 function appPreload() {
-    // Load assets heres
+    // Load assets here
 
 }
 
