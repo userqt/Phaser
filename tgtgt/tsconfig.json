@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types",
+    "strict": false,
+    "target": "esnext",
+    "module": "esnext"
+  },
+  "include": ["engine/**/*.js"],
+  "exclude": ["**/tests/**", "**/test/**"]
+}
