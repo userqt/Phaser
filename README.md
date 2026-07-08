@@ -10,7 +10,7 @@ The project uses Phaser 3 injected via html.
 
 ## Prerequisites
 - Latest typescript installed globally on the system. It is needed to generate the d.ts files. 
-- Nothing more is needed, the project has no node modules, no server, just vanialla js
+- Nothing more is needed, the project has no node modules, no server, just vanilla js
 - The d.ts files are needed for auto-complete and no errors displayed in Monaco editor run time in the browser.
 
 ## Install
