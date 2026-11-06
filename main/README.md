@@ -90,6 +90,14 @@ Dev steps:
 3. Open:
    - `http://localhost:8080/index.html`
 
+### Running the engine tests
+The text adventure engine includes a small browser test harness:
+
+1. Start the static server as shown above.
+2. Open `http://localhost:8080/engine/textAdventure/tests/tests.html`.
+3. The page shows `PASS: n checks` or `FAIL: ...` and lists every check.
+   Uncaught errors during the run also fail the suite.
+
 Note: With the current codebase, `index.html` runs the Text Adventure engine by default.
 After you add the start page, open the start page and pick the engine.
 

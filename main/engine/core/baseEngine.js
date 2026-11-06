@@ -21,7 +21,11 @@ class BaseEngine {
   }
 
   create() {
-    this.appCreate();
+    const result = this.appCreate();
+
+    if (result && typeof result.catch === "function") {
+      result.catch((error) => console.error("appCreate() failed:", error));
+    }
   }
 
   update() {
@@ -59,18 +63,31 @@ class BaseEngine {
    */
   save(keyOrObjOrValue, value) {
     if (value !== undefined) {
+      if (typeof keyOrObjOrValue !== "string") {
+        console.warn(
+          "save(): key must be a string when a value is provided; using an auto-generated key instead."
+        );
+        return this.save(value);
+      }
+
       const keys = keyOrObjOrValue.split(".");
       let obj = this.saveData;
       for (let i = 0; i < keys.length - 1; i++) {
+        this.assertSafeSaveKey(keys[i]);
+
         if (typeof obj[keys[i]] !== "object" || obj[keys[i]] === null) {
           obj[keys[i]] = {};
         }
 
         obj = obj[keys[i]];
       }
-      obj[keys[keys.length - 1]] = value;
-    } else if (typeof keyOrObjOrValue === "object") {
+
+      const lastKey = keys[keys.length - 1];
+      this.assertSafeSaveKey(lastKey);
+      obj[lastKey] = value;
+    } else if (typeof keyOrObjOrValue === "object" && keyOrObjOrValue !== null) {
       for (const key in keyOrObjOrValue) {
+        this.assertSafeSaveKey(key);
         this.saveData[key] = keyOrObjOrValue[key];
       }
     } else {
@@ -83,6 +100,16 @@ class BaseEngine {
   }
 
   /**
+   * Rejects key segments that could mutate object prototypes.
+   * @param {string} key
+   */
+  assertSafeSaveKey(key) {
+    if (key === "__proto__" || key === "prototype" || key === "constructor") {
+      throw new Error(`save(): "${key}" is not a valid save key`);
+    }
+  }
+
+  /**
    * Retrieves a saved value from the engine.
    * Can get by string key, object key, auto-key, or full save object.
    * @param {string|object} [keyOrObj] - The key or object to retrieve. Omit to get full save object.
@@ -92,7 +119,14 @@ class BaseEngine {
     if (Object.keys(this.saveData).length === 0) {
       const saved = localStorage.getItem(this.saveKey);
       if (saved) {
-        this.saveData = JSON.parse(saved);
+        try {
+          const parsed = JSON.parse(saved);
+          this.saveData = parsed && typeof parsed === "object" ? parsed : {};
+        } catch (error) {
+          console.warn("getSave(): saved data was invalid, starting fresh.", error);
+          this.saveData = {};
+          localStorage.removeItem(this.saveKey);
+        }
       }
     }
 
@@ -107,7 +141,12 @@ class BaseEngine {
       const keys = keyOrObj.split(".");
       let obj = this.saveData;
       for (let i = 0; i < keys.length; i++) {
-        if (obj[keys[i]] === undefined) {
+        if (
+          keys[i] === "__proto__" ||
+          keys[i] === "prototype" ||
+          keys[i] === "constructor" ||
+          obj[keys[i]] === undefined
+        ) {
           return undefined;
         }
 

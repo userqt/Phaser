@@ -2,14 +2,20 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Text Adventure Engine Tests</title>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"
+      integrity="sha384-AvQiDMZAVLda3VtAoU5MCfBz8pzXhteb2CiUJeKBmPlWzpXj1uJ96Km11+YuFNu/"
+      crossorigin="anonymous"
+    ></script>
     <script src="../../core/baseEngine.js"></script>
     <script src="../../textAdventure/textEngine.js"></script>
     <script src="../../core/index.js"></script>
 
     <!-- test scripts -->
     <script src="testAnimateASCII.js"></script>
+    <script src="testAnimatedText.js"></script>
     <script src="testBoxContainer.js"></script>
     <script src="testPopup.js"></script>
     <script src="testPixelArt.js"></script>
@@ -17,35 +23,95 @@
     <script>
       window.GameEngine = window.Engines.TextEngine;
       const GameEngine = window.GameEngine;
+
+      window.__errorCount = 0;
+      window.addEventListener("error", () => {
+        window.__errorCount++;
+      });
+      window.addEventListener("unhandledrejection", () => {
+        window.__errorCount++;
+      });
+
+      const results = [];
+      window.check = function (name, condition) {
+        results.push({ name, passed: !!condition });
+        if (condition) {
+          console.log("PASS: " + name);
+        } else {
+          console.error("FAIL: " + name);
+        }
+      };
+
+      function report(summary, failed) {
+        const reportEl = document.createElement("pre");
+        reportEl.style.cssText =
+          "position:fixed;inset:0;z-index:9999;margin:0;padding:16px;" +
+          "background:#000;font:16px monospace;white-space:pre-wrap;color:" +
+          (failed.length === 0 ? "#00ff00" : "#ff5555");
+        reportEl.textContent =
+          summary +
+          "\n" +
+          results
+            .map((r) => (r.passed ? "PASS " : "FAIL ") + r.name)
+            .join("\n");
+        document.body.appendChild(reportEl);
+        document.title = summary;
+        window.__testResults = results;
+        window.__testDone = true;
+      }
+
       const app = {
         preload: function () {},
         create: function () {
           const engine = GameEngine;
-          const scene = engine.scene;
 
-          scene.time.delayedCall(0, async () => {
-            if (typeof testBoxContainer === "function") {
-              await testBoxContainer(engine);
-              engine.clear();
+          setTimeout(async () => {
+            try {
+              if (typeof testBoxContainer === "function") {
+                await testBoxContainer(engine);
+                engine.clear();
+              }
+
+              if (typeof testPopup === "function") {
+                await testPopup(engine);
+                engine.clear();
+              }
+
+              if (typeof testPixelArt === "function") {
+                await testPixelArt(engine);
+                engine.clear();
+              }
+
+              if (typeof testAnimatedText === "function") {
+                await testAnimatedText(engine);
+                engine.clear();
+              }
+
+              if (typeof testAnimateASCII === "function") {
+                await testAnimateASCII(engine);
+                engine.clear();
+              }
+
+              if (window.__errorCount > 0) {
+                window.check("no uncaught errors during tests", false);
+              } else {
+                window.check("no uncaught errors during tests", true);
+              }
+
+              // todo: add more tests here
+            } catch (error) {
+              console.error("Test run crashed:", error);
+              window.check("test run completed without throwing", false);
             }
 
-            if (typeof testPopup === "function") {
-              await testPopup(engine);
-              engine.clear();
-            }
-
-            if (typeof testPixelArt === "function") {
-              await testPixelArt(engine);
-              engine.clear();
-            }
-
-            if (typeof testAnimateASCII === "function") {
-              await testAnimateASCII(engine);
-              engine.clear();
-            }
-
-            // todo: add more tests here
-          });
+            const failed = results.filter((r) => !r.passed);
+            const summary =
+              failed.length === 0
+                ? `PASS: ${results.length} checks`
+                : `FAIL: ${failed.length} of ${results.length} checks`;
+            console.log(summary, failed);
+            report(summary, failed);
+          }, 0);
         },
         update: function () {},
       };

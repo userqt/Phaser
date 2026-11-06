@@ -2,6 +2,7 @@ declare class TextEngine extends BaseEngine {
     input: HTMLInputElement;
     textY: number;
     inputQueue: any[];
+    pendingResolvers: any[];
     gameStart: boolean;
     decorLayer: any;
     boxes: {};
@@ -12,8 +13,6 @@ declare class TextEngine extends BaseEngine {
     greenPalette: string[];
     globalFont: string;
     inputWrapper: HTMLDivElement;
-    scaleX: number;
-    scaleY: number;
     showInput(): void;
     writeLines(artString: any, animate?: boolean): void;
     /**
@@ -23,21 +22,39 @@ declare class TextEngine extends BaseEngine {
      */
     writeLine(line: string, animate?: boolean): void;
     /**
+     * Types text character by character.
+     * Stops safely if the text object is destroyed while the timer is pending.
+     */
+    animateText(textObj: any, text: any, speed?: number): void;
+    /**
+     * Cancels a pending character-by-character animation for a text object.
+     */
+    stopTextAnimation(textObj: any): void;
+    /**
      * Reads the next input from the queue.
      * @returns {string} - The next input in lowercase, or an empty string if none.
      */
     readLine(): string;
     /**
      * Reads the next input from the queue asynchronously.
-     * Waits until input is available.
-     * @returns {Promise<string>} - Resolves with the next input in lowercase, or an empty string if none.
+     * Resolves as soon as input is submitted (no polling).
+     * @returns {Promise<string>} - Resolves with the next input in lowercase.
      */
     readLineAsync(): Promise<string>;
+    /**
+     * Resolves waiting readLineAsync() calls with queued input, in order.
+     */
+    flushInputQueue(): void;
     /**
      * Checks if there is any input in the queue.
      * @returns {boolean} - True if input is available, false otherwise.
      */
     hasInput(): boolean;
+    /**
+     * Removes one-shot layers (animated art, pixel art and open popups).
+     * Named UI boxes (HUD) are kept.
+     */
+    clearTransientArt(): void;
     /**
      * Removes the last line of text from the container and adjusts the vertical position.
      */
@@ -46,12 +63,20 @@ declare class TextEngine extends BaseEngine {
      * Starts the game by setting the start flag, adding initial input, and showing the input field.
      */
     startGame(): void;
+    _resizeHandler: () => void;
     createBoundDecoration(): void;
     handleResize(): void;
     /**
      * Resizes the box containers to match the screen size.
+     * @param {number} [scale] - Scale to apply; defaults to the text container scale.
      */
-    resizeBoxes(): void;
+    resizeBoxes(scale?: number): void;
+    /**
+     * Applies the current screen scale to a box container.
+     * @param {Phaser.GameObjects.Container} box
+     * @param {number} [scale]
+     */
+    applyBoxScale(box: Phaser.GameObjects.Container, scale?: number): void;
     /**
      * Creates a text box container.
      * @param {string} name Unique box name.
@@ -62,6 +87,7 @@ declare class TextEngine extends BaseEngine {
      * @param {string} label Optional label text.
      * @param {boolean} hasDeco Whether to show a border.
      * @param {boolean} hasBackground Whether to show background fill.
+     * @param {boolean} [register=true] Whether to register the box for automatic resizing.
      * @returns {Phaser.GameObjects.Container & {
      *   origX: number,
      *   origY: number,
@@ -72,7 +98,7 @@ declare class TextEngine extends BaseEngine {
      *   lines: Phaser.GameObjects.Text[]
      * }}
      */
-    createBoxContainer(name: string, x: number, y: number, width: number, height: number, label: string, hasDeco: boolean, hasBackground: boolean): Phaser.GameObjects.Container & {
+    createBoxContainer(name: string, x: number, y: number, width: number, height: number, label: string, hasDeco: boolean, hasBackground: boolean, register?: boolean): Phaser.GameObjects.Container & {
         origX: number;
         origY: number;
         origWidth: number;

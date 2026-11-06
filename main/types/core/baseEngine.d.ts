@@ -28,6 +28,11 @@ declare class BaseEngine {
      */
     save(keyOrObjOrValue: string | object | any, value?: any): string | undefined;
     /**
+     * Rejects key segments that could mutate object prototypes.
+     * @param {string} key
+     */
+    assertSafeSaveKey(key: string): void;
+    /**
      * Retrieves a saved value from the engine.
      * Can get by string key, object key, auto-key, or full save object.
      * @param {string|object} [keyOrObj] - The key or object to retrieve. Omit to get full save object.

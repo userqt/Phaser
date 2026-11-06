@@ -12,13 +12,20 @@ function testPixelArt(engine) {
     ];
 
     engine.drawPixelArt(smiley, 50, 50);
-    console.log("Pixel art drawn at 50,50.");
+
+    const expectedPixels = smiley.flat().filter((colorIndex) => colorIndex !== 0)
+      .length;
+    window.check(
+      "drawPixelArt renders one glyph per filled pixel",
+      !!engine.pixelLayer && engine.pixelLayer.list.length === expectedPixels
+    );
 
     setTimeout(() => {
       if (engine.pixelLayer) {
         engine.pixelLayer.list.forEach((obj) => obj.destroy());
         engine.pixelLayer.destroy();
         engine.pixelLayer = null;
+        delete engine.boxes.pixelLayer;
       }
       resolve();
     }, 500);
