@@ -14,8 +14,15 @@ function testBoxContainer(engine) {
     engine.writeLineToBox("stats", "Mana: 50");
 
     const box = engine.boxes["stats"];
-    console.assert(box.lines.length === 2, "Stats box should have 2 lines");
-    console.log("writeLineToBox test passed.");
+    window.check(
+      "writeLineToBox adds one text object per line",
+      box.lines.length === 2
+    );
+    window.check(
+      "writeLineToBox keeps the box label and background",
+      box.list.some((child) => child.type === "Text") &&
+        box.list.some((child) => child.type === "Graphics")
+    );
 
     setTimeout(() => {
       engine.clearBox("stats");

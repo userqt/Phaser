@@ -12,9 +12,17 @@ function testPopup(engine) {
       }
     );
 
+    window.check(
+      "showPopup registers the popup",
+      engine.popupStack.length === 1
+    );
+
     setTimeout(() => {
       engine.hidePopup();
-      console.log("Popup hide test completed.");
+      window.check(
+        "hidePopup removes the popup",
+        engine.popupStack.length === 0
+      );
       resolve();
     }, 1000);
   });

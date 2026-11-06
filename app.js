@@ -4,8 +4,18 @@ function appPreload() {
 }
 
 async function appCreate() {
-    // Initialize here
+    await showTitleScreen();
 
+    let playing = true;
+    while (playing) {
+        await playGame();
+        playing = await askPlayAgain();
+    }
+
+    GameEngine.writeLine("\nThanks for playing!");
+}
+
+async function showTitleScreen() {
     const doorFrames = [
   `
   +---+
@@ -37,17 +47,13 @@ async function appCreate() {
   `
 ];
 
-await GameEngine.animateASCII(doorFrames, 300);
+    await GameEngine.animateASCII(doorFrames, 300, 50, 300);
 
     GameEngine.createBoxContainer("stats", 850, 50, 200, 60, "Player Stats", true, true);
     GameEngine.writeLineToBox("stats", "Health: 100");
     GameEngine.writeLineToBox("stats", "Mana: 50", true);
 
-    GameEngine.showPopup("Alert!", "Game Over! Press OK to restart!", 100 , 100, 400, 200, () => {
-   console.log("Popup closed, restarting game...");
-    // Add your game logic here
- }, );
-const smiley8 = [
+    const smiley8 = [
   [0,0,1,1,1,1,0,0],
   [0,1,1,1,1,1,1,0],
   [1,1,0,1,1,0,1,1],
@@ -58,9 +64,7 @@ const smiley8 = [
   [0,0,1,1,1,1,0,0]
 ];
 
-GameEngine.drawPixelArt(smiley8, 50, 50);
- await GameEngine.readLineAsync()
-
+    GameEngine.drawPixelArt(smiley8, 50, 50);
 
     GameEngine.writeLine("                                              ########################                             ");
     GameEngine.writeLine("                                              ####                ####                             ");
@@ -89,7 +93,10 @@ GameEngine.drawPixelArt(smiley8, 50, 50);
     GameEngine.writeLine("          |________________________|                                                               ");
     GameEngine.writeLine("\n\n                                                                                               ");
     GameEngine.writeLine("                                               Press Enter Key To Start                            ");
-    await GameEngine.readLineAsync()
+    await GameEngine.readLineAsync();
+}
+
+async function playGame() {
     GameEngine.clear();
 
     GameEngine.writeLine("\n\n");
@@ -114,16 +121,26 @@ GameEngine.drawPixelArt(smiley8, 50, 50);
     GameEngine.writeLine("b) No");
     GameEngine.writeLine("\n");
 
-    let choiceHouse = "";
-    while(choiceHouse !== "a" && choiceHouse !== "b") {
-        choiceHouse = (await GameEngine.readLineAsync()).toLowerCase();
-        if(choiceHouse !== "a" && choiceHouse !== "b") {
-            GameEngine.clearLastLine();
-            GameEngine.writeLine("Sorry this answer is not available, please choose a or b!", true);
+    const choiceHouse = await readChoice(["a", "b"], "Sorry this answer is not available, please choose a or b!");
+
+    if (choiceHouse === "b") {
+        GameEngine.writeLine("\nYou are now in the garden! What do you want to choose?");
+        GameEngine.writeLine("a) go back inside");
+        GameEngine.writeLine("b) leave");
+
+        const choiceGarden = await readChoice(["a", "b"], "Sorry this answer is not available, please choose a or b!");
+
+        if (choiceGarden === "b") {
+            GameEngine.writeLine("\nYou leave the haunted house behind. GAME OVER!");
+            return;
         }
     }
 
-    if(choiceHouse === "a") {
+    await exploreBedroom();
+}
+
+async function exploreBedroom(statusMessage = "") {
+    while (true) {
         GameEngine.clear();
         const artRoom = `
                                                                     -----------------
@@ -149,27 +166,25 @@ GameEngine.drawPixelArt(smiley8, 50, 50);
         GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
         GameEngine.writeLine("-|-------------|--------------------------------------------------------------------");*/
 
-        GameEngine.writeLine("\n\n");
+        GameEngine.writeLine("\n");
+        if (statusMessage) {
+            GameEngine.writeLine(statusMessage);
+            GameEngine.writeLine("\n");
+        }
         GameEngine.writeLine("You are now inside the house in the bedroom. What do you want to choose?");
-        GameEngine.writeLine("a) open shelve");
-        GameEngine.writeLine("b) turn on Tv");
+        GameEngine.writeLine("a) open shelf");
+        GameEngine.writeLine("b) turn on TV");
         GameEngine.writeLine("c) drink water");
-        GameEngine.writeLine("d) go to the bathroom");      
+        GameEngine.writeLine("d) go to the bathroom");
         GameEngine.writeLine("\n");
 
-        let choiceBedroom = "";
-        while(choiceBedroom !== "a" && choiceBedroom !== "b" && choiceBedroom !== "c" && choiceBedroom !== "d") {
-            choiceBedroom = (await GameEngine.readLineAsync()).toLowerCase();
-            if(choiceBedroom !== "a" && choiceBedroom !== "b" && choiceBedroom !== "c" && choiceBedroom !== "d") {   
-                GameEngine.clearLastLine();         
-                GameEngine.writeLine("Sorry this answer is not available, please choose a, b, c or d!", true);
-            }
-        }
+        const choiceBedroom = await readChoice(["a", "b", "c", "d"], "Sorry this answer is not available, please choose a, b, c or d!");
 
-        if(choiceBedroom === "a") {
-            GameEngine.writeLine("Oh no! You have been eaten by the shelve monster!");
+        if (choiceBedroom === "a") {
+            GameEngine.writeLine("Oh no! You have been eaten by the shelf monster! GAME OVER!");
+            return;
         }
-        else if(choiceBedroom === "b") {
+        else if (choiceBedroom === "b") {
             GameEngine.writeLine("      \\  /      ");
             GameEngine.writeLine("       \\/       ");
             GameEngine.writeLine(" --------------- ");
@@ -180,8 +195,9 @@ GameEngine.drawPixelArt(smiley8, 50, 50);
             GameEngine.writeLine("|---------------|");
             GameEngine.writeLine(" --------------- ");
             GameEngine.writeLine("Oh you need to choose which channel you want to watch.");
+            statusMessage = "You turn off the TV and keep exploring.";
         }
-        else if(choiceBedroom === "c") {
+        else if (choiceBedroom === "c") {
             GameEngine.writeLine("       *********               ");
             GameEngine.writeLine("     **         **             ");
             GameEngine.writeLine("     *   X   X   *            ");
@@ -189,18 +205,37 @@ GameEngine.drawPixelArt(smiley8, 50, 50);
             GameEngine.writeLine("       **      **             ");
             GameEngine.writeLine("        *******              ");
             GameEngine.writeLine("Oh no the water was poisonous. You died! GAME OVER!");
+            return;
         }
-        else if(choiceBedroom === "d") {
-            GameEngine.writeLine("Finally! You went out of the bedroom. You are now in the bathroom.");
+        else if (choiceBedroom === "d") {
+            statusMessage = "Finally! You went out of the bedroom. You are now in the bathroom. There is nothing here, so you go back to the bedroom.";
         }
-    }
-    else if(choiceHouse === "b") {
-        GameEngine.writeLine("You are now in the garden! What do you want to choose?");
     }
 }
 
-async function appUpdate() {
-    // Run the core game loop here
+async function readChoice(validChoices, invalidMessage) {
+    while (true) {
+        const answer = (await GameEngine.readLineAsync()).trim().toLowerCase();
 
-    // In the text adventure engine, this may be left empty, since there is no continuous update needed
+        if (validChoices.includes(answer)) {
+            return answer;
+        }
+
+        GameEngine.clearLastLine();
+        GameEngine.writeLine(invalidMessage, true);
+    }
+}
+
+async function askPlayAgain() {
+    GameEngine.writeLine("\nDo you want to play again?");
+    GameEngine.writeLine("a) Yes");
+    GameEngine.writeLine("b) No");
+    GameEngine.writeLine("\n");
+
+    const choice = await readChoice(["a", "b"], "Sorry this answer is not available, please choose a or b!");
+    return choice === "a";
+}
+
+function appUpdate() {
+    // The text adventure engine needs no per-frame update.
 }

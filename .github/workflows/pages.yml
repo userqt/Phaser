@@ -4,11 +4,18 @@ on:
     branches-ignore:
       - gh-pages
 
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -17,6 +24,42 @@ jobs:
           echo "Current branch: $GITHUB_REF_NAME"
           echo "Listing repo files:"
           ls -la
+
+      - name: Checkout gh-pages previews
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-preview
+
+      - name: Prune previews for deleted branches
+        continue-on-error: true
+        run: |
+          if [ ! -d gh-pages-preview ]; then
+            echo "No gh-pages branch yet, nothing to prune."
+            exit 0
+          fi
+
+          git ls-remote --heads origin | sed 's#.*refs/heads/##' | grep -v '^gh-pages$' > live-branches.txt
+
+          find gh-pages-preview -mindepth 1 -maxdepth 1 -type d ! -name '.git' -printf '%f\n' | while read -r dir; do
+            if ! grep -qxF "$dir" live-branches.txt; then
+              echo "Removing stale preview: $dir"
+              rm -rf "gh-pages-preview/$dir"
+            fi
+          done
+
+          cd gh-pages-preview
+
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No stale previews found."
+            exit 0
+          fi
+
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -am "Prune previews for deleted branches"
+          git push origin HEAD:gh-pages
 
       - name: Prepare Pages folder
         run: |
@@ -28,7 +71,7 @@ jobs:
       - name: Copy branch files
         run: |
           echo "Copying branch files to public/${GITHUB_REF_NAME}/"
-          rsync -av --exclude='public' --exclude='.git' ./ public/${GITHUB_REF_NAME}/
+          rsync -av --exclude='public' --exclude='.git' --exclude='gh-pages-preview' --exclude='live-branches.txt' ./ public/${GITHUB_REF_NAME}/
           echo "Copy complete"
 
       - name: Deploy action

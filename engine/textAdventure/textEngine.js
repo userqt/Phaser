@@ -6,6 +6,7 @@ class TextEngine extends BaseEngine {
     // ascii system
     this.textY = 20;
     this.inputQueue = [];
+    this.pendingResolvers = [];
     this.gameStart = false;
     this.decorLayer = null;
     this.boxes = {};
@@ -18,19 +19,16 @@ class TextEngine extends BaseEngine {
     // pixel art
     this.pixelLayer = null;
     this.greenPalette = ["#003300", "#006600", "#009900", "#00cc00", "#00ff00"];
-    this.pixelLayer = null;
 
     // fonts
     if (/Windows/i.test(navigator.platform)) {
-      this.globalFont = "Lucida Console, monospace";
+      
     } else {
-      this.globalFont = "'Retrocide', monospace";
+      this.globalFont = "'RetrocideMono', monospace";
     }
 
     // misc
     this.inputWrapper = null;
-    this.scaleX = 1;
-    this.scaleY = 1;
   }
 
   /*
@@ -82,6 +80,7 @@ class TextEngine extends BaseEngine {
       if (e.key === "Enter") {
         engine.inputQueue.push(engine.input.value);
         engine.input.value = "";
+        engine.flushInputQueue();
       }
     };
   }
@@ -94,8 +93,7 @@ class TextEngine extends BaseEngine {
     if (!artString) return;
 
     artString.split("\n").forEach((line) => {
-      const fixedLine = line.replace(/\\/g, "\\ "); // compensate for backslash javascript internal replacement
-      this.writeLine(fixedLine, animate);
+      this.writeLine(line, animate);
     });
   }
 
@@ -105,41 +103,54 @@ class TextEngine extends BaseEngine {
    * @param {boolean} [animate=false] - If true, shows text character by character.
    */
   writeLine(line, animate = false) {
-    if (!animate) {
-      const textObj = this.scene.add.text(0, this.textY, "  " + line, {
-        fontFamily: this.globalFont,
-        fontSize: "18px",
-        color: "#00ff00",
-        lineHeight: 18,
-      });
-
-      textObj.origY = this.textY;
-      this.textContainer.add(textObj);
-      this.textY += 18;
-      return;
-    }
-
-    let charIndex = 0;
-    const textObj = this.scene.add.text(0, this.textY, "", {
+    const textObj = this.scene.add.text(0, this.textY, animate ? "" : "  " + line, {
       fontFamily: this.globalFont,
       fontSize: "18px",
       color: "#00ff00",
       lineHeight: 18,
     });
-    textObj.origY = this.textY;
-    this.textContainer.add(textObj);
 
-    const speed = 30;
+    this.textContainer.add(textObj);
+    this.textY += 18;
+
+    if (animate) {
+      this.animateText(textObj, line, 30);
+    }
+  }
+
+  /**
+   * Types text character by character.
+   * Stops safely if the text object is destroyed while the timer is pending.
+   */
+  animateText(textObj, text, speed = 30) {
+    let charIndex = 0;
+
     const addChar = () => {
-      if (charIndex < line.length) {
-        textObj.text += line[charIndex];
+      if (!textObj.active || !textObj.scene) {
+        textObj.animTimer = null;
+        return;
+      }
+
+      if (charIndex < text.length) {
+        textObj.text += text[charIndex];
         charIndex++;
-        setTimeout(addChar, speed);
+        textObj.animTimer = setTimeout(addChar, speed);
       } else {
-        this.textY += 18;
+        textObj.animTimer = null;
       }
     };
+
     addChar();
+  }
+
+  /**
+   * Cancels a pending character-by-character animation for a text object.
+   */
+  stopTextAnimation(textObj) {
+    if (textObj && textObj.animTimer) {
+      clearTimeout(textObj.animTimer);
+      textObj.animTimer = null;
+    }
   }
 
   /**
@@ -149,27 +160,31 @@ class TextEngine extends BaseEngine {
   readLine() {
     if (this.hasInput()) {
       const value = this.inputQueue.shift();
-      return value ? value.toLowerCase() : "";
+      return value ? value.trim().toLowerCase() : "";
     }
     return "";
   }
 
   /**
    * Reads the next input from the queue asynchronously.
-   * Waits until input is available.
-   * @returns {Promise<string>} - Resolves with the next input in lowercase, or an empty string if none.
+   * Resolves as soon as input is submitted (no polling).
+   * @returns {Promise<string>} - Resolves with the next input in lowercase.
    */
   readLineAsync() {
     return new Promise((resolve) => {
-      const checkInput = () => {
-        if (this.hasInput()) {
-          resolve(this.readLine());
-        } else {
-          requestAnimationFrame(checkInput);
-        }
-      };
-      checkInput();
+      this.pendingResolvers.push(resolve);
+      this.flushInputQueue();
     });
+  }
+
+  /**
+   * Resolves waiting readLineAsync() calls with queued input, in order.
+   */
+  flushInputQueue() {
+    while (this.pendingResolvers.length > 0 && this.inputQueue.length > 0) {
+      const resolve = this.pendingResolvers.shift();
+      resolve(this.readLine());
+    }
   }
 
   /**
@@ -188,10 +203,33 @@ class TextEngine extends BaseEngine {
 
     const children = [...this.textContainer.list];
     children.forEach((child) => {
+      this.stopTextAnimation(child);
       child.destroy();
     });
 
     this.textY = 20;
+    this.clearTransientArt();
+  }
+
+  /**
+   * Removes one-shot layers (animated art, pixel art and open popups).
+   * Named UI boxes (HUD) are kept.
+   */
+  clearTransientArt() {
+    if (this.boxes.anim) {
+      this.boxes.anim.destroy();
+      delete this.boxes.anim;
+    }
+
+    if (this.pixelLayer) {
+      this.pixelLayer.destroy();
+      delete this.boxes.pixelLayer;
+      this.pixelLayer = null;
+    }
+
+    while (this.popupStack.length > 0) {
+      this.hidePopup();
+    }
   }
 
   /**
@@ -201,6 +239,7 @@ class TextEngine extends BaseEngine {
     const children = this.textContainer.list;
     if (children.length > 0) {
       const lastChild = children[children.length - 1];
+      this.stopTextAnimation(lastChild);
       lastChild.destroy();
       this.textY -= 18;
     }
@@ -213,6 +252,7 @@ class TextEngine extends BaseEngine {
     this.gameStart = true;
     this.inputQueue.push(" ");
     this.showInput();
+    this.flushInputQueue();
   }
 
   /**
@@ -220,7 +260,6 @@ class TextEngine extends BaseEngine {
    */
   preload() {
     super.preload();
-    this.scene.load.on("complete", () => {});
   }
 
   /**
@@ -254,8 +293,6 @@ class TextEngine extends BaseEngine {
 
     super.create(); // this calls the appCreate function
 
-    this.createBoundDecoration();
-
     const startGameHandler = () => {
       this.clear();
       this.startGame();
@@ -282,8 +319,19 @@ class TextEngine extends BaseEngine {
 
     this.handleResize();
 
-    window.addEventListener("resize", () => {
-      this.handleResize();
+    this._resizeHandler = () => this.handleResize();
+    window.addEventListener("resize", this._resizeHandler);
+
+    this.scene.events.once("shutdown", () => {
+      this.pendingResolvers.forEach((resolve) => resolve(""));
+      this.pendingResolvers = [];
+
+      window.removeEventListener("resize", this._resizeHandler);
+
+      if (this.inputWrapper) {
+        this.inputWrapper.remove();
+        this.inputWrapper = null;
+      }
     });
   }
 
@@ -303,8 +351,14 @@ class TextEngine extends BaseEngine {
    * Creates decorative borders around the game canvas.
    */
   createBoundDecoration() {
-    const graphics = this.scene.add.graphics();
     const canvas = this.scene.game.canvas;
+
+    if (!this.decorLayer) {
+      this.decorLayer = this.scene.add.graphics();
+    }
+
+    const graphics = this.decorLayer;
+    graphics.clear();
 
     graphics.lineStyle(4, 0x00ff00);
     graphics.strokeRect(0, 0, canvas.width, canvas.height);
@@ -314,8 +368,6 @@ class TextEngine extends BaseEngine {
     graphics.fillRect(canvas.width - 10, 0, 10, 10);
     graphics.fillRect(0, canvas.height - 10, 10, 10);
     graphics.fillRect(canvas.width - 10, canvas.height - 10, 10, 10);
-
-    this.decorLayer = graphics;
   }
 
   /*
@@ -324,8 +376,8 @@ class TextEngine extends BaseEngine {
   handleResize() {
     const game = this.scene.game;
     const parent = game.canvas.parentNode;
-    const w = parent.clientWidth;
-    const h = parent.clientHeight;
+    const w = Math.max(1, parent.clientWidth);
+    const h = Math.max(1, document.documentElement.clientHeight);
 
     game.scale.resize(w, h);
     game.canvas.style.width = w + "px";
@@ -337,20 +389,7 @@ class TextEngine extends BaseEngine {
       this.inputWrapper.style.width = w - 40 + "px";
     }
 
-    if (this.decorLayer) {
-      const children = this.scene.children.list.filter(
-        (c) => c !== this.decorLayer
-      );
-      this.decorLayer.clear();
-      this.createBoundDecoration();
-
-      children.forEach((child) => {
-        if (child.type === "Text") {
-          child.x *= this.scaleX;
-          child.y *= this.scaleY;
-        }
-      });
-    }
+    this.createBoundDecoration();
 
     // redraw the text container
     const scale = w / game.config.width;
@@ -358,20 +397,28 @@ class TextEngine extends BaseEngine {
     this.textContainer.x = 0;
     this.textContainer.y = 0;
 
-    this.resizeBoxes();
+    this.resizeBoxes(scale);
   }
 
   /**
    * Resizes the box containers to match the screen size.
+   * @param {number} [scale] - Scale to apply; defaults to the text container scale.
    */
-  resizeBoxes() {
-    const scale = this.textContainer.scaleX; // relative scale: match textContainer scale
+  resizeBoxes(scale = this.textContainer ? this.textContainer.scaleX : 1) {
     for (const name in this.boxes) {
-      const box = this.boxes[name];
-      box.setScale(scale);
-      box.x = box.origX * scale;
-      box.y = box.origY * scale;
+      this.applyBoxScale(this.boxes[name], scale);
     }
+  }
+
+  /**
+   * Applies the current screen scale to a box container.
+   * @param {Phaser.GameObjects.Container} box
+   * @param {number} [scale]
+   */
+  applyBoxScale(box, scale = this.textContainer ? this.textContainer.scaleX : 1) {
+    box.setScale(scale);
+    box.x = box.origX * scale;
+    box.y = box.origY * scale;
   }
 
   /**
@@ -384,6 +431,7 @@ class TextEngine extends BaseEngine {
    * @param {string} label Optional label text.
    * @param {boolean} hasDeco Whether to show a border.
    * @param {boolean} hasBackground Whether to show background fill.
+   * @param {boolean} [register=true] Whether to register the box for automatic resizing.
    * @returns {Phaser.GameObjects.Container & {
    *   origX: number,
    *   origY: number,
@@ -394,7 +442,17 @@ class TextEngine extends BaseEngine {
    *   lines: Phaser.GameObjects.Text[]
    * }}
    */
-  createBoxContainer(name, x, y, width, height, label, hasDeco, hasBackground) {
+  createBoxContainer(
+    name,
+    x,
+    y,
+    width,
+    height,
+    label,
+    hasDeco,
+    hasBackground,
+    register = true
+  ) {
     if (!this.boxes) {
       this.boxes = {};
     }
@@ -428,7 +486,7 @@ class TextEngine extends BaseEngine {
         fontFamily: this.globalFont,
         fontSize: 16,
         color: "#00ff00",
-        backgroundColor: "0x003300",
+        backgroundColor: "#003300",
       });
 
       // Position label centered with padding
@@ -438,7 +496,11 @@ class TextEngine extends BaseEngine {
       container.add(labelText);
     }
 
-    this.boxes[name] = container;
+    if (register) {
+      this.applyBoxScale(container);
+      this.boxes[name] = container;
+    }
+
     return container;
   }
 
@@ -456,7 +518,7 @@ class TextEngine extends BaseEngine {
 
     const yOffset = box.lines.length * 18 + 10;
 
-    const textObj = this.scene.add.text(10, yOffset, line, {
+    const textObj = this.scene.add.text(10, yOffset, animate ? "" : line, {
       fontFamily: this.globalFont,
       fontSize: 16,
       color: "#00ff00",
@@ -466,16 +528,7 @@ class TextEngine extends BaseEngine {
     box.lines.push(textObj);
 
     if (animate) {
-      textObj.text = "";
-      let charIndex = 0;
-      const addChar = () => {
-        if (charIndex < line.length) {
-          textObj.text += line[charIndex];
-          charIndex++;
-          setTimeout(addChar, 30);
-        }
-      };
-      addChar();
+      this.animateText(textObj, line, 30);
     }
   }
 
@@ -487,7 +540,10 @@ class TextEngine extends BaseEngine {
     const box = this.boxes[name];
     if (!box) return;
 
-    box.lines.forEach((line) => line.destroy());
+    box.lines.forEach((line) => {
+      this.stopTextAnimation(line);
+      line.destroy();
+    });
     box.lines = [];
   }
 
@@ -504,30 +560,32 @@ class TextEngine extends BaseEngine {
    * @param {function} [onClose] - Function to call when the OK button is clicked.
    */
   showPopup(title, message, x, y, width, height, onClose = () => {}) {
-    const gameWidth = this.scene.game.config.width;
-    const gameHeight = this.scene.game.config.height;
+    const scale = this.popupLayer.scaleX || 1;
+    const gameWidth = this.scene.game.canvas.width / scale;
+    const gameHeight = this.scene.game.canvas.height / scale;
     const boxWidth = Math.min(gameWidth * 0.8, width); // width or 80% of game width
     const boxHeight = height;
     const xPos = x ?? (gameWidth - boxWidth) / 2;
     const yPos = y ?? (gameHeight - height) / 2;
 
     // Create a semi-transparent overlay to block the background
-    const overlay = this.scene.add.graphics({ depth: 99 }); // Use 'const'
+    const overlay = this.scene.add.graphics();
     overlay.fillStyle(0x000000, 0.7);
     overlay.fillRect(0, 0, gameWidth, gameHeight);
     this.popupLayer.add(overlay);
 
-    // Create the pop-up box container
-    const boxName = `popup_${this.popupStack.length}`;
+    // Popups are children of the already-scaled popup layer, so they stay
+    // unregistered and unscaled to avoid double scaling on resize.
     const popupBox = this.createBoxContainer(
-      boxName,
+      `popup_${this.popupStack.length}`,
       xPos,
       yPos,
       boxWidth,
       boxHeight,
       title,
       true,
-      true
+      true,
+      false
     );
 
     this.popupLayer.add(popupBox);
@@ -563,10 +621,8 @@ class TextEngine extends BaseEngine {
     popupBox.add(buttonText);
 
     this.popupStack.push({
-      name: boxName,
       box: popupBox,
       overlay: overlay,
-      onClose: onClose,
     });
   }
 
@@ -581,12 +637,7 @@ class TextEngine extends BaseEngine {
     const activePopup = this.popupStack.pop();
 
     if (activePopup) {
-      if (this.boxes[activePopup.name]) {
-        this.clearBox(activePopup.name);
-        this.boxes[activePopup.name].destroy();
-        delete this.boxes[activePopup.name];
-      }
-
+      activePopup.box.destroy();
       activePopup.overlay.destroy();
     }
   }
@@ -645,18 +696,30 @@ class TextEngine extends BaseEngine {
    * at the given position, and repeats until all frames have been displayed.
    */
   async animateASCII(frames, startX = 50, startY = 50, delay = 200) {
-    const animContainer = this.createBoxContainer(
-      "anim",
-      startX,
-      startY,
-      0,
-      0,
-      "",
-      false,
-      false
-    );
+    let animContainer = this.boxes.anim;
+
+    if (animContainer) {
+      animContainer.origX = startX;
+      animContainer.origY = startY;
+      this.applyBoxScale(animContainer);
+    } else {
+      animContainer = this.createBoxContainer(
+        "anim",
+        startX,
+        startY,
+        0,
+        0,
+        "",
+        false,
+        false
+      );
+    }
 
     for (let i = 0; i < frames.length; i++) {
+      if (!animContainer.active || !animContainer.scene) {
+        break;
+      }
+
       animContainer.list.forEach((obj) => obj.destroy());
       animContainer.lines = [];
 
