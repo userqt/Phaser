@@ -85,7 +85,7 @@ Dev steps:
    - `npm install -g typescript`
    - `tsc -p tsconfig.json`
 2. Serve the folder with any static server (avoid `file://` issues):
-   - Example: `npx http-server -p 8080`
+   - Example: `npx http-server -p 8080 -c-1`
    - Example: `python -m http.server 8080`
 3. Open:
    - `http://localhost:8080/index.html`

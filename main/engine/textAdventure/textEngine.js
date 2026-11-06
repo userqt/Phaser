@@ -22,11 +22,10 @@ class TextEngine extends BaseEngine {
 
     // fonts
     if (/Windows/i.test(navigator.platform)) {
-      
+      this.globalFont = "Lucida Console, monospace";
     } else {
-      this.globalFont = "'RetrocideMono', monospace";
+      this.globalFont = "RetrocideMono, monospace";
     }
-
     // misc
     this.inputWrapper = null;
   }
@@ -112,7 +111,7 @@ class TextEngine extends BaseEngine {
 
     this.textContainer.add(textObj);
     this.textY += 18;
-
+    
     if (animate) {
       this.animateText(textObj, line, 30);
     }
@@ -724,9 +723,9 @@ class TextEngine extends BaseEngine {
       animContainer.lines = [];
 
       frames[i].split("\n").forEach((line, rowIndex) => {
-        const textObj = this.scene.add.text(0, rowIndex * 16, line, {
+        const textObj = this.scene.add.text(0, rowIndex * 18, line, {
           fontFamily: this.globalFont,
-          fontSize: "16px",
+          fontSize: "18px",
           color: "#00ff00",
         });
         animContainer.add(textObj);
