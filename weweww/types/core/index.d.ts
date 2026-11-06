@@ -1,3 +1,0 @@
-type EnginesType = {
-    TextEngine: TextEngine;
-};
