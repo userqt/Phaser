@@ -17,54 +17,49 @@ async function appCreate() {
 
 async function showTitleScreen() {
     const doorFrames = [
-  `
-  +---+
-  |   |
-  |   |
-  |   |
-  +---+
-  `,
-  `
-  +---+
-  |   |
-  | / |
-  |   |
-  +---+
-  `,
-  `
-  +---+
-  |   |
-  | / |
-  |/  |
-  +---+
-  `,
-  `
-  +---+
-  |   |
-  |   |
-  |   |
-  +---+
-  `
+`
++---+
+|   |
+|   |
+|   |
++---+
+`,
+ `
++---+
+|   |
+| / |
+|   |
++---+
+`,
+`
++---+
+|   |
+| / |
+|/  |
++---+
+`,
+`
++---+
+|   |
+|   |
+|   |
++---+
+`
 ];
 
-    await GameEngine.animateASCII(doorFrames, 300, 50, 300);
-
-    GameEngine.createBoxContainer("stats", 850, 50, 200, 60, "Player Stats", true, true);
+    const boxHeight = 60;
+    const boxWidth = 200;
+    GameEngine.createBoxContainer(
+        "stats",
+        GameEngine.scene.game.config.width - boxWidth - 30,
+        50,
+        boxWidth, 
+        boxHeight, 
+        "Player Stats", 
+        true, 
+        true);
     GameEngine.writeLineToBox("stats", "Health: 100");
     GameEngine.writeLineToBox("stats", "Mana: 50", true);
-
-    const smiley8 = [
-  [0,0,1,1,1,1,0,0],
-  [0,1,1,1,1,1,1,0],
-  [1,1,0,1,1,0,1,1],
-  [1,0,0,1,1,0,0,1],
-  [1,1,1,3,3,1,1,1],
-  [1,4,1,1,1,1,4,1],
-  [0,1,4,4,4,4,1,0],
-  [0,0,1,1,1,1,0,0]
-];
-
-    GameEngine.drawPixelArt(smiley8, 50, 50);
 
     GameEngine.writeLine("                                              ########################                             ");
     GameEngine.writeLine("                                              ####                ####                             ");
@@ -93,6 +88,7 @@ async function showTitleScreen() {
     GameEngine.writeLine("          |________________________|                                                               ");
     GameEngine.writeLine("\n\n                                                                                               ");
     GameEngine.writeLine("                                               Press Enter Key To Start                            ");
+    await GameEngine.animateASCII(doorFrames, 210, 300, 300);
     await GameEngine.readLineAsync();
 }
 
@@ -155,18 +151,8 @@ async function exploreBedroom(statusMessage = "") {
 -|-------------|--------------------------------------------------------------------`;
 
         GameEngine.showArt(artRoom);
-       /*GameEngine.writeLine("                                                                    ----------------- ");  
-        GameEngine.writeLine(" _______________                                    \\  /           |      !!       | ");
-        GameEngine.writeLine(" |             |                              _______\\/______      |      !!       | ");
-        GameEngine.writeLine(" |   w    c    |                |-|          |░░░░░░░░░░░| * |      |      !!       | ");
-        GameEngine.writeLine(" |             |                | |          |░░░░░░░░░░░| * |      |      !!       | ");
-        GameEngine.writeLine(" |          *  |   |------------------|      |░░░░░░░░░░░| * |      |    * !! *     | ");
-        GameEngine.writeLine(" |             |   ||                ||   ___|░░░░░░░░░░░|___|__    |      !!       | ");
-        GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
-        GameEngine.writeLine(" |             |   ||                ||    |                  |     |      !!       | ");
-        GameEngine.writeLine("-|-------------|--------------------------------------------------------------------");*/
-
-        GameEngine.writeLine("\n");
+       
+        GameEngine.writeLine("");
         if (statusMessage) {
             GameEngine.writeLine(statusMessage);
             GameEngine.writeLine("\n");
@@ -181,10 +167,12 @@ async function exploreBedroom(statusMessage = "") {
         const choiceBedroom = await readChoice(["a", "b", "c", "d"], "Sorry this answer is not available, please choose a, b, c or d!");
 
         if (choiceBedroom === "a") {
+            GameEngine.clear();
             GameEngine.writeLine("Oh no! You have been eaten by the shelf monster! GAME OVER!");
             return;
         }
         else if (choiceBedroom === "b") {
+            GameEngine.clear();
             GameEngine.writeLine("      \\  /      ");
             GameEngine.writeLine("       \\/       ");
             GameEngine.writeLine(" --------------- ");
@@ -195,9 +183,11 @@ async function exploreBedroom(statusMessage = "") {
             GameEngine.writeLine("|---------------|");
             GameEngine.writeLine(" --------------- ");
             GameEngine.writeLine("Oh you need to choose which channel you want to watch.");
+            await GameEngine.readLineAsync();
             statusMessage = "You turn off the TV and keep exploring.";
         }
         else if (choiceBedroom === "c") {
+            GameEngine.clear();
             GameEngine.writeLine("       *********               ");
             GameEngine.writeLine("     **         **             ");
             GameEngine.writeLine("     *   X   X   *            ");
@@ -208,6 +198,7 @@ async function exploreBedroom(statusMessage = "") {
             return;
         }
         else if (choiceBedroom === "d") {
+            GameEngine.clear();
             statusMessage = "Finally! You went out of the bedroom. You are now in the bathroom. There is nothing here, so you go back to the bedroom.";
         }
     }
